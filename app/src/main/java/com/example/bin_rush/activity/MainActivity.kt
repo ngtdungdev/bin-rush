@@ -20,14 +20,16 @@ class MainActivity : AppCompatActivity() {
     private val initialTimeInMillis: Long = 60 * 60 * 1000
     private lateinit var btnPlay: ImageView
     private lateinit var btnDaily: ImageView
+    private lateinit var imageTree: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        imageView = findViewById(R.id.imageView)
+        imageView = findViewById(R.id.image)
         number = findViewById(R.id.number)
         btnPlay = findViewById(R.id.btnPlay)
         progressBar = findViewById(R.id.progressBar)
+        imageTree = findViewById(R.id.imageTree)
         btnDaily = findViewById(R.id.btnDaily)
         progressBar.max = initialTimeInMillis.toInt()
         initView()
@@ -40,6 +42,10 @@ class MainActivity : AppCompatActivity() {
             .asGif()
             .load(R.drawable.benefit)
             .into(btnDaily)
+        Glide.with(this)
+            .asGif()
+            .load(R.drawable.lvl1)
+            .into(imageTree)
         imageView.setOnClickListener {
             startActivity(Intent(this@MainActivity, PlayActivity::class.java))
         }

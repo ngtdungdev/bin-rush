@@ -1,7 +1,6 @@
 package com.example.bin_rush.adapter
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,7 +22,7 @@ class GameAdapter(
         this.listener = listener
     }
     inner class ViewHolder(view: View): RecyclerView.ViewHolder(view){
-        val imageView: ImageView = view.findViewById(R.id.imageView)
+        val imageView: ImageView = view.findViewById(R.id.imageTree)
         init {
             view.setOnClickListener {
                 listener.onItemClick(adapterPosition)

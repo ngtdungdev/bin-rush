@@ -6,7 +6,7 @@
     app:cardCornerRadius="20dp">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/imageTree"
         android:layout_width="300dp"
         android:layout_height="400dp"
         android:background="@drawable/banner" />
