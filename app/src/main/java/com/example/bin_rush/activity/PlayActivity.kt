@@ -24,10 +24,14 @@ class PlayActivity: AppCompatActivity() {
         R.drawable.apple,
         R.drawable.banana,
         R.drawable.bottle,
+        R.drawable.
         R.drawable.metal,
         R.drawable.plastic,
         R.drawable.paper
     )
+
+    private var
+
     var widthOfBlock: Int = 0
     var noOfBlock: Int = 8
 
@@ -321,6 +325,15 @@ class PlayActivity: AppCompatActivity() {
         wastes[blockEnd].tag = background1
     }
 
+    private fun randomWaste(imageView: ImageView) {
+        var i = 0
+        do {
+            val random: Int = floor(Math.random() * WASTE_TYPE.size).toInt()
+            imageView.setImageResource(WASTE_TYPE[random])
+            imageView.tag = WASTE_TYPE[random]
+        } while (check((imageView.id + i++) % WASTE_TYPE.size))
+    }
+
     private fun createBoard() {
         gridlayout.rowCount = noOfBlock
         gridlayout.columnCount = noOfBlock
@@ -336,11 +349,13 @@ class PlayActivity: AppCompatActivity() {
             val margin = 2
             layoutParams.setMargins(margin, margin, margin, margin)
             imageView.layoutParams = android.view.ViewGroup.LayoutParams(widthOfBlock, widthOfBlock)
-            val random: Int = floor(Math.random() * WASTE_TYPE.size).toInt()
-            imageView.setImageResource(WASTE_TYPE[random])
-            imageView.tag = WASTE_TYPE[random]
+            imageView.setImageResource(emptyBlock)
+            imageView.tag = emptyBlock
             wastes.add(imageView)
             gridlayout.addView(imageView)
+        }
+        for (i in 0 until noOfBlock*noOfBlock) {
+            randomWaste(wastes[i])
         }
     }
 
