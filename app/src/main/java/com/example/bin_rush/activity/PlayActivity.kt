@@ -24,13 +24,10 @@ class PlayActivity: AppCompatActivity() {
         R.drawable.apple,
         R.drawable.banana,
         R.drawable.bottle,
-        R.drawable.
         R.drawable.metal,
         R.drawable.plastic,
         R.drawable.paper
     )
-
-    private var
 
     var widthOfBlock: Int = 0
     var noOfBlock: Int = 8
