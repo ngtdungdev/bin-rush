@@ -1,23 +1,26 @@
 package com.example.bin_rush
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
+import android.util.TypedValue
 import androidx.gridlayout.widget.GridLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import java.util.Arrays.asList
+import kotlin.math.abs
+import kotlin.math.floor
 
 class PlayActivity: AppCompatActivity() {
     private var candies = intArrayOf(
-        R.drawable.bluecandy,
-        R.drawable.greencandy,
-        R.drawable.orangecandy,
-        R.drawable.purplecandy,
-        R.drawable.redcandy,
-        R.drawable.yellowcandy
-
+        R.drawable.apple,
+        R.drawable.banana,
+        R.drawable.bottle,
+        R.drawable.metal,
+        R.drawable.plastic,
+        R.drawable.paper
     )
     var widthOfBlock:Int = 0
     var noOfBlock:Int = 8
@@ -45,7 +48,7 @@ class PlayActivity: AppCompatActivity() {
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         widthOfScreen = displayMetrics.widthPixels
 
-        heightOfScreen = displayMetrics.heightPixels
+        heightOfScreen = widthOfScreen + 10
         widthOfBlock = widthOfScreen / noOfBlock
         candy = ArrayList()
         createBoard()
@@ -136,51 +139,51 @@ class PlayActivity: AppCompatActivity() {
 
     private fun checkColumnForThree() {
         for (i in 0..47) {
-            var chosenCandy = candy.get(i).tag
-            var isBlank: Boolean = candy.get(i).tag == notCandy
+            var chosenCandy = candy[i].tag
+            var isBlank: Boolean = candy[i].tag == notCandy
             var x = i
-                if (candy.get(x).tag as Int == chosenCandy
-                    && !isBlank
-                    && candy.get(x+noOfBlock).tag as Int == chosenCandy
-                    && candy.get(x+2*noOfBlock).tag as Int == chosenCandy
-                ) {
-                    score = score + 3
-                    scoreResult.text = "$score"
-                    candy.get(x).setImageResource(notCandy)
-                    candy.get(x).setTag(notCandy)
-                    x = x + noOfBlock
-                    candy.get(x).setImageResource(notCandy)
-                    candy.get(x).setTag(notCandy)
-                    x = x + noOfBlock
-                    candy.get(x).setImageResource(notCandy)
-                    candy.get(x).setTag(notCandy)
-                }
+            if (candy[x].tag as Int == chosenCandy
+                && !isBlank
+                && candy[x+noOfBlock].tag as Int == chosenCandy
+                && candy[x+2*noOfBlock].tag as Int == chosenCandy
+            ) {
+                score += 3
+                scoreResult.text = "$score"
+                candy[x].setImageResource(notCandy)
+                candy[x].tag = notCandy
+                x += noOfBlock
+                candy[x].setImageResource(notCandy)
+                candy[x].tag = notCandy
+                x += noOfBlock
+                candy[x].setImageResource(notCandy)
+                candy[x].tag = notCandy
+            }
         }
         moveDownCandies()
     }
 
     private fun moveDownCandies() {
         val firstRow = arrayOf(1, 2, 3, 4, 5, 6, 7)
-        val list = asList(*firstRow)
+        val list = listOf(*firstRow)
         for (i in 55 downTo 0) {
-            if (candy.get(i+noOfBlock).tag as Int == notCandy) {
-                candy.get(i+noOfBlock).setImageResource(candy.get(i).tag as Int)
-                candy.get(i+noOfBlock).setTag(candy.get(i).tag as Int)
+            if (candy[i+noOfBlock].tag as Int == notCandy) {
+                candy[i+noOfBlock].setImageResource(candy[i].tag as Int)
+                candy[i+noOfBlock].tag = candy[i].tag as Int
 
-                candy.get(i).setImageResource(notCandy)
-                candy.get(i).setTag(notCandy)
-                if (list.contains(i) && candy.get(i).tag == notCandy) {
-                    var randomColor: Int = Math.abs(Math.random() * candies.size).toInt()
-                    candy.get(i).setImageResource(candies[randomColor])
-                    candy.get(i).setTag(candies[randomColor])
+                candy[i].setImageResource(notCandy)
+                candy[i].tag = notCandy
+                if (list.contains(i) && candy[i].tag == notCandy) {
+                    var randomColor: Int = abs(Math.random() * candies.size).toInt()
+                    candy[i].setImageResource(candies[randomColor])
+                    candy[i].tag = candies[randomColor]
                 }
             }
         }
         for (i in 0..7) {
-            if (candy.get(i).tag as Int == notCandy) {
+            if (candy[i].tag as Int == notCandy) {
                 var randomColor: Int = Math.abs(Math.random() * candies.size).toInt()
-                candy.get(i).setImageResource(candies[randomColor])
-                candy.get(i).setTag(candies[randomColor])
+                candy[i].setImageResource(candies[randomColor])
+                candy[i].tag = candies[randomColor]
             }
         }
     }
@@ -205,12 +208,27 @@ class PlayActivity: AppCompatActivity() {
         for ( i in 0 until 64) {
             val imageView = ImageView(this)
             imageView.id = i
-            imageView.layoutParams = android.view.ViewGroup.LayoutParams(widthOfBlock, widthOfBlock)
-            var random: Int = Math.floor(Math.random() * candies.size).toInt()
+            val sizeInPixels = convertDpToPixel(50f, this)
+            val layoutParams = GridLayout.LayoutParams(
+                android.view.ViewGroup.LayoutParams(sizeInPixels, sizeInPixels)
+            )
+            val margin = 2
+            layoutParams.setMargins(margin, margin, margin, margin)
+            imageView.layoutParams = layoutParams
+
+            var random: Int = floor(Math.random() * candies.size).toInt()
             imageView.setImageResource(candies[random])
-            imageView.setTag(candies[random])
+            imageView.tag = candies[random]
             candy.add(imageView)
             gridlayout.addView(imageView)
         }
+    }
+
+    private fun convertDpToPixel(dp: Float, context: Context): Int {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp,
+            context.resources.displayMetrics
+        ).toInt()
     }
 }

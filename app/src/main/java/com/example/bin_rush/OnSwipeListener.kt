@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import kotlin.math.abs
 
 open class OnSwipeListener(context: Context): View.OnTouchListener {
      var gestureDetector: GestureDetector
@@ -32,14 +33,14 @@ open class OnSwipeListener(context: Context): View.OnTouchListener {
                  yDiff = e2.y - e1.y
                  xDiff = e2.x - e1.x
             } else return result
-            if (Math.abs(xDiff) > Math.abs(yDiff)) {
-                if (Math.abs(xDiff) > SWIPE_THRESOLD && Math.abs(velocityY) > SWIPE_VALOCITY_THRESOLD) {
+            if (abs(xDiff) > abs(yDiff)) {
+                if (abs(xDiff) > SWIPE_THRESOLD && abs(velocityX) > SWIPE_VALOCITY_THRESOLD) {
                     if (xDiff > 0) {
                         onSwipeRight()
                     } else onSwipeLeft()
                 }
                 return true
-            } else if (Math.abs(yDiff) > SWIPE_THRESOLD && Math.abs(velocityY) > SWIPE_VALOCITY_THRESOLD) {
+            } else if (abs(yDiff) > SWIPE_THRESOLD && abs(velocityY) > SWIPE_VALOCITY_THRESOLD) {
                 if (yDiff > 0) {
                     onSwipeTop()
                 } else onSwipeBottom()

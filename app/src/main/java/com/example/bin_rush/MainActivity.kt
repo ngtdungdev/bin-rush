@@ -15,13 +15,7 @@ class MainActivity : AppCompatActivity() {
         val action = supportActionBar
         action?.hide()
         imageView.setOnClickListener {
-            try {
-                Handler().postDelayed({
-                    startActivity(Intent(this@MainActivity, PlayActivity::class.java))
-                },3000)
-            }catch (e:Exception) {
-                e.printStackTrace()
-            }
+            startActivity(Intent(this@MainActivity, PlayActivity::class.java))
         }
     }
 }
