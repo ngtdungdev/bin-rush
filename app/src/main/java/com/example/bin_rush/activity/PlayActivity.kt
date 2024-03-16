@@ -1,13 +1,17 @@
-package com.example.bin_rush
+package com.example.bin_rush.activity
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
 import android.util.Log
+import android.util.TypedValue
 import androidx.gridlayout.widget.GridLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.example.bin_rush.R
+import com.example.bin_rush.util.OnSwipeListener
 import kotlin.math.abs
 import kotlin.math.floor
 
@@ -19,7 +23,6 @@ class PlayActivity: AppCompatActivity() {
         R.drawable.metal,
         R.drawable.plastic,
         R.drawable.paper
-
     )
     var widthOfBlock: Int = 0
     var noOfBlock: Int = 8
@@ -48,7 +51,8 @@ class PlayActivity: AppCompatActivity() {
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         widthOfScreen = displayMetrics.widthPixels
-        heightOfScreen = displayMetrics.heightPixels
+
+        heightOfScreen = widthOfScreen + 10
         widthOfBlock = widthOfScreen / noOfBlock
 
         wastes = ArrayList()
@@ -225,12 +229,32 @@ class PlayActivity: AppCompatActivity() {
         for (i in 0 until noOfBlock*noOfBlock) {
             val imageView = ImageView(this)
             imageView.id = i
+            val sizeInPixels = convertDpToPixel(50f, this)
+            val layoutParams = GridLayout.LayoutParams(
+                android.view.ViewGroup.LayoutParams(sizeInPixels, sizeInPixels)
+            )
+            val margin = 2
+            layoutParams.setMargins(margin, margin, margin, margin)
             imageView.layoutParams = android.view.ViewGroup.LayoutParams(widthOfBlock, widthOfBlock)
             val random: Int = floor(Math.random() * WASTE_TYPE.size).toInt()
             imageView.setImageResource(WASTE_TYPE[random])
             imageView.tag = WASTE_TYPE[random]
             wastes.add(imageView)
             gridlayout.addView(imageView)
+        }
+    }
+
+    private fun convertDpToPixel(dp: Float, context: Context): Int {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp,
+            context.resources.displayMetrics
+        ).toInt()
+    }
+
+    private fun animatation(vararg indices: Int) {
+        for (i in indices) {
+            Log.i("com", wastes[i].x.toString())
         }
     }
 }

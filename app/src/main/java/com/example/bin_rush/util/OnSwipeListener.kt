@@ -1,4 +1,4 @@
-package com.example.bin_rush
+package com.example.bin_rush.util
 
 import android.content.Context
 import android.util.Log
