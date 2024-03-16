@@ -36,9 +36,9 @@ class PlayGameFragment : DialogFragment(){
         super.onViewCreated(view, savedInstanceState)
         recyclerView = view.findViewById(R.id.recyclerView)
         listGame = ArrayList()
-        listGame.add(Game(1, R.drawable.apple))
-        listGame.add(Game(2, R.drawable.banana))
-        listGame.add(Game(3, R.drawable.orangecandy))
+        listGame.add(Game(1, R.drawable.gamecrush))
+        listGame.add(Game(2, R.drawable.gameclassify))
+        listGame.add(Game(3, R.drawable.gamecoming))
         gameAdapter =  GameAdapter(requireContext(), listGame)
         gameAdapter.setOnAdapterListener(object : OnAdapterListener {
             override fun onItemClick(position: Int) {
@@ -52,7 +52,7 @@ class PlayGameFragment : DialogFragment(){
         val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         recyclerView.layoutManager = layoutManager
         val scale = resources.displayMetrics.density
-        val spacingInPixels = (2 * scale + 0.5f).toInt()
+        val spacingInPixels = (10 * scale + 0.5f).toInt()
         recyclerView.addItemDecoration(HorizontalSpaceItemDecoration(spacingInPixels))
         recyclerView.adapter = gameAdapter
     }

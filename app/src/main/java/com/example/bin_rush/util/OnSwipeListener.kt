@@ -33,8 +33,6 @@ abstract class OnSwipeListener(context: Context): View.OnTouchListener {
             if (e1 != null) {
                 yDiff = e2.y - e1.y
                 xDiff = e2.x - e1.x
-                Log.i("com", e1.toString())
-                Log.i("com", e2.toString())
             } else
                 return result
             if (abs(xDiff) > abs(yDiff)) {
