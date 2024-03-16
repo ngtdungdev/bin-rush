@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.bin_rush"
-        minSdk = 26
+        minSdk = 30
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
@@ -47,4 +47,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     implementation("pl.droidsonroids.gif:android-gif-drawable:1.2.17")
+    implementation("com.github.bumptech.glide:glide:4.13.0")
+    implementation("androidx.gridlayout:gridlayout:1.0.0")
+
 }

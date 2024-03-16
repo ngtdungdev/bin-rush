@@ -3,13 +3,14 @@ package com.example.bin_rush
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
+import androidx.gridlayout.widget.GridLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import java.util.Arrays.asList
 
 class PlayActivity: AppCompatActivity() {
-    var candies = intArrayOf(
+    private var candies = intArrayOf(
         R.drawable.bluecandy,
         R.drawable.greencandy,
         R.drawable.orangecandy,
@@ -20,26 +21,31 @@ class PlayActivity: AppCompatActivity() {
     )
     var widthOfBlock:Int = 0
     var noOfBlock:Int = 8
+
     var widthOfScreen:Int = 0
     lateinit var candy: ArrayList<ImageView>
     var candyToBeDragged: Int = 0
     var candyToBeReplaced: Int = 0
     var notCandy: Int  = R.drawable.transparent
+    lateinit var gridlayout: GridLayout
 
     lateinit var mHandler: Handler
-    private lateinit var scoreResult: TextView
+    lateinit var scoreResult: TextView
+    var heightOfScreen: Int = 0
     var score = 0
+    var interval = 100L
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_play)
 
         scoreResult = findViewById(R.id.score)
+        gridlayout = findViewById(R.id.board)
 
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         widthOfScreen = displayMetrics.widthPixels
 
-        var heightOfScreen = displayMetrics.heightPixels
+        heightOfScreen = displayMetrics.heightPixels
         widthOfBlock = widthOfScreen / noOfBlock
         candy = ArrayList()
         createBoard()
@@ -83,53 +89,49 @@ class PlayActivity: AppCompatActivity() {
     }
 
     private fun startRepeat() {
-        var background: Int = candy.get(candyToBeReplaced).tag as Int
-        var background1: Int = candy.get(candyToBeReplaced).tag as Int
-
-        candy.get(candyToBeDragged).setImageResource(background)
-        candy.get(candyToBeDragged).setImageResource(background1)
-
-        candy.get(candyToBeDragged).setTag(background1)
-        candy.get(candyToBeDragged).setTag(background1)
+        repeatChecker.run()
     }
 
     private fun checkRowForThree() {
         for(i in 0..61) {
-            var chosedCandy = candy.get(i).tag
-            var isBlank: Boolean = candy.get(i).tag == notCandy
+            var chosenCandy = candy[i].tag
+            var isBlank: Boolean = candy[i].tag == notCandy
             val notValid = arrayOf(6,7,14,15,22,23,30,31,38,39,46,47,54,55)
-            val list = asList(*notValid)
-
+            val list = listOf(*notValid)
             if(!list.contains(i)) {
                 var x = i
 
-                if(candy.get(x++).tag as Int == chosedCandy
+                if(candy[x++].tag as Int == chosenCandy
                     && !isBlank
-                    && candy.get(x++).tag as Int == chosedCandy
-                    && candy.get(x).tag as Int == chosedCandy
+                    && candy[x++].tag as Int == chosenCandy
+                    && candy[x].tag as Int == chosenCandy
                 ){
-                    score = score + 3
+                    score += 3
                     scoreResult.text = "$score"
-                    candy.get(x).setImageResource(notCandy)
-                    candy.get(x).setTag(notCandy)
+                    candy[x].setImageResource(notCandy)
+                    candy[x].tag = notCandy
                     x--
-                    candy.get(x).setImageResource(notCandy)
-                    candy.get(x).setTag(notCandy)
+                    candy[x].setImageResource(notCandy)
+                    candy[x].tag = notCandy
+                    x--
+                    candy[x].setImageResource(notCandy)
+                    candy[x].tag = notCandy
                 }
             }
         }
+        moveDownCandies()
     }
 
     private fun candyInterChange() {
-        var background: Int = candy.get(candyToBeReplaced).tag as Int
-        var background1: Int = candy.get(candyToBeDragged).tag as Int
+        var background: Int = candy[candyToBeReplaced].tag as Int
+        var background1: Int = candy[candyToBeDragged].tag as Int
 
         // To be swapped
-        candy.get(candyToBeDragged).setImageResource(background)
-        candy.get(candyToBeReplaced).setImageResource(background1)
+        candy[candyToBeDragged].setImageResource(background)
+        candy[candyToBeReplaced].setImageResource(background1)
 
-        candy.get(candyToBeDragged).setTag(background)
-        candy.get(candyToBeReplaced).setTag(background1)
+        candy[candyToBeDragged].tag = background
+        candy[candyToBeReplaced].tag = background1
     }
 
     private fun checkColumnForThree() {
@@ -154,10 +156,61 @@ class PlayActivity: AppCompatActivity() {
                     candy.get(x).setTag(notCandy)
                 }
         }
-//        moveDownCandies()
+        moveDownCandies()
     }
 
+    private fun moveDownCandies() {
+        val firstRow = arrayOf(1, 2, 3, 4, 5, 6, 7)
+        val list = asList(*firstRow)
+        for (i in 55 downTo 0) {
+            if (candy.get(i+noOfBlock).tag as Int == notCandy) {
+                candy.get(i+noOfBlock).setImageResource(candy.get(i).tag as Int)
+                candy.get(i+noOfBlock).setTag(candy.get(i).tag as Int)
+
+                candy.get(i).setImageResource(notCandy)
+                candy.get(i).setTag(notCandy)
+                if (list.contains(i) && candy.get(i).tag == notCandy) {
+                    var randomColor: Int = Math.abs(Math.random() * candies.size).toInt()
+                    candy.get(i).setImageResource(candies[randomColor])
+                    candy.get(i).setTag(candies[randomColor])
+                }
+            }
+        }
+        for (i in 0..7) {
+            if (candy.get(i).tag as Int == notCandy) {
+                var randomColor: Int = Math.abs(Math.random() * candies.size).toInt()
+                candy.get(i).setImageResource(candies[randomColor])
+                candy.get(i).setTag(candies[randomColor])
+            }
+        }
+    }
+
+    val repeatChecker: Runnable = object: Runnable{
+        override fun run() {
+            try {
+                checkRowForThree()
+                checkColumnForThree()
+                moveDownCandies()
+            }
+            finally {
+                mHandler.postDelayed(this, interval)
+            }
+        }
+    }
     private fun createBoard() {
-        TODO("Not yet implemented")
+        gridlayout.rowCount = noOfBlock
+        gridlayout.columnCount = noOfBlock
+        gridlayout.layoutParams.width = widthOfScreen
+        gridlayout.layoutParams.height = heightOfScreen
+        for ( i in 0 until 64) {
+            val imageView = ImageView(this)
+            imageView.id = i
+            imageView.layoutParams = android.view.ViewGroup.LayoutParams(widthOfBlock, widthOfBlock)
+            var random: Int = Math.floor(Math.random() * candies.size).toInt()
+            imageView.setImageResource(candies[random])
+            imageView.setTag(candies[random])
+            candy.add(imageView)
+            gridlayout.addView(imageView)
+        }
     }
 }
