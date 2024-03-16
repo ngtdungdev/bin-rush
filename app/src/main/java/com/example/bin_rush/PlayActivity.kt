@@ -97,7 +97,26 @@ class PlayActivity: AppCompatActivity() {
         for(i in 0..61) {
             var chosedCandy = candy.get(i).tag
             var isBlank: Boolean = candy.get(i).tag == notCandy
-//            val notValid = arrayListOf<>(6,7,14,15,22,23,30,31,38,39,46)
+            val notValid = arrayOf(6,7,14,15,22,23,30,31,38,39,46,47,54,55)
+            val list = asList(*notValid)
+
+            if(!list.contains(i)) {
+                var x = i
+
+                if(candy.get(x++).tag as Int == chosedCandy
+                    && !isBlank
+                    && candy.get(x++).tag as Int == chosedCandy
+                    && candy.get(x).tag as Int == chosedCandy
+                ){
+                    score = score + 3
+                    scoreResult.text = "$score"
+                    candy.get(x).setImageResource(notCandy)
+                    candy.get(x).setTag(notCandy)
+                    x--
+                    candy.get(x).setImageResource(notCandy)
+                    candy.get(x).setTag(notCandy)
+                }
+            }
         }
     }
 

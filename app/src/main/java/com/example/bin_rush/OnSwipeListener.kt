@@ -26,10 +26,12 @@ open class OnSwipeListener(context: Context): View.OnTouchListener {
             velocityY: Float
         ): Boolean {
             val result = false
-
-            val yDiff = e2.y - e1.y
-            val xDiff = e2.x - e1.x
-
+            var yDiff = 0f
+            var xDiff = 0f
+            if(e1 != null) {
+                 yDiff = e2.y - e1.y
+                 xDiff = e2.x - e1.x
+            } else return result
             if (Math.abs(xDiff) > Math.abs(yDiff)) {
                 if (Math.abs(xDiff) > SWIPE_THRESOLD && Math.abs(velocityY) > SWIPE_VALOCITY_THRESOLD) {
                     if (xDiff > 0) {
