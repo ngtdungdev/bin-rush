@@ -11,12 +11,12 @@ import java.util.Arrays.asList
 
 class PlayActivity: AppCompatActivity() {
     private var candies = intArrayOf(
-        R.drawable.bluecandy,
-        R.drawable.greencandy,
-        R.drawable.orangecandy,
-        R.drawable.purplecandy,
-        R.drawable.redcandy,
-        R.drawable.yellowcandy
+        R.drawable.apple,
+        R.drawable.banana,
+        R.drawable.bottle,
+        R.drawable.metal,
+        R.drawable.plastic,
+        R.drawable.paper
 
     )
     var widthOfBlock:Int = 0
