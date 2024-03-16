@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
+import android.util.Log
 import android.util.TypedValue
 import androidx.gridlayout.widget.GridLayout
 import android.widget.ImageView
@@ -230,5 +231,11 @@ class PlayActivity: AppCompatActivity() {
             dp,
             context.resources.displayMetrics
         ).toInt()
+    }
+
+    private fun animatation(vararg indices: Int) {
+        for (i in indices) {
+            Log.i("com", candy[i].x.toString())
+        }
     }
 }
