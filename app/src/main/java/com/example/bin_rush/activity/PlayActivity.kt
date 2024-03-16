@@ -80,23 +80,33 @@ class PlayActivity: AppCompatActivity() {
         for (imageView in wastes) {
             imageView.setOnTouchListener(object: OnSwipeListener(this) {
                 override fun onSwipeLeft() {
-                    val firstColumn: List<Int> = (0 until noOfBlock*noOfBlock).filter { it % noOfBlock == 0 }.toList();
+                    val firstColumn: List<Int> = (0 until noOfBlock*noOfBlock).filter { it % noOfBlock == 0 }.toList()
                     if (firstColumn.contains(imageView.id)) {
                         return
                     }
                     blockStart = imageView.id
                     blockEnd = blockStart - 1
                     swapBlocks()
+                    val case1 = check(blockStart);
+                    val case2 = check(blockEnd);
+                    if (!case1 && !case2) {
+                        swapBlocks()
+                    }
                 }
 
                 override fun onSwipeRight() {
-                    val firstColumn: List<Int> = (0 until noOfBlock*noOfBlock).filter { it % noOfBlock == noOfBlock - 1 }.toList();
-                    if (firstColumn.contains(imageView.id)) {
+                    val lastColumn: List<Int> = (0 until noOfBlock*noOfBlock).filter { it % noOfBlock == noOfBlock - 1 }.toList()
+                    if (lastColumn.contains(imageView.id)) {
                         return
                     }
                     blockStart = imageView.id
                     blockEnd = blockStart + 1
                     swapBlocks()
+                    val case1 = check(blockStart);
+                    val case2 = check(blockEnd);
+                    if (!case1 && !case2) {
+                        swapBlocks()
+                    }
                 }
 
                 override fun onSwipeTop() {
@@ -107,6 +117,11 @@ class PlayActivity: AppCompatActivity() {
                     blockStart = imageView.id
                     blockEnd = blockStart - noOfBlock
                     swapBlocks()
+                    val case1 = check(blockStart);
+                    val case2 = check(blockEnd);
+                    if (!case1 && !case2) {
+                        swapBlocks()
+                    }
                 }
 
                 override fun onSwipeBottom() {
@@ -118,6 +133,11 @@ class PlayActivity: AppCompatActivity() {
                     blockStart = imageView.id
                     blockEnd = blockStart + noOfBlock
                     swapBlocks()
+                    val case1 = check(blockStart);
+                    val case2 = check(blockEnd);
+                    if (!case1 && !case2) {
+                        swapBlocks()
+                    }
                 }
 
             })
@@ -126,6 +146,65 @@ class PlayActivity: AppCompatActivity() {
         mHandler = Handler()
         startRepeat()
         scoreResult.text = "Score - 0"
+    }
+
+    private fun check(index: Int): Boolean {
+        val case1 = checkRowFor3(index)
+        val case2 = checkColumnFor3(index)
+        return case1 || case2
+    }
+
+    private fun checkColumnFor3(index: Int): Boolean {
+        val chosenBlock = wastes[index].tag
+        if (chosenBlock == emptyBlock)
+            return false
+        val row: Int = index / noOfBlock + 1
+        if (row > 2 &&
+            wastes[index - noOfBlock].tag as Int == chosenBlock &&
+            wastes[index - 2*noOfBlock].tag as Int == chosenBlock
+        ) {
+            return true
+        } else if (
+            row in 2..<noOfBlock &&
+            wastes[index - noOfBlock].tag as Int == chosenBlock &&
+            wastes[index + noOfBlock].tag as Int == chosenBlock
+        ) {
+            return true
+        } else if (
+            row < noOfBlock - 1 &&
+            wastes[index + noOfBlock].tag as Int == chosenBlock &&
+            wastes[index + 2*noOfBlock].tag as Int == chosenBlock
+        ) {
+            return true
+        }
+        return false
+    }
+
+    private fun checkRowFor3(index: Int): Boolean {
+        val chosenBlock = wastes[index].tag
+        if (chosenBlock == emptyBlock)
+            return false
+        val column = index % noOfBlock + 1
+        if (
+            column > 2 &&
+            wastes[index - 1].tag as Int == chosenBlock &&
+            wastes[index - 2].tag as Int == chosenBlock
+        ) {
+            return true
+        } else if (
+            column in 2..<noOfBlock &&
+            wastes[index - 1].tag as Int == chosenBlock &&
+            wastes[index + 1].tag as Int == chosenBlock
+        ) {
+            return true
+        } else if (
+            column < noOfBlock - 1 &&
+            wastes[index + 1].tag as Int == chosenBlock &&
+            wastes[index + 2].tag as Int == chosenBlock
+        ) {
+            return true
+        }
+        return false
     }
 
     private fun startRepeat() {
@@ -167,17 +246,17 @@ class PlayActivity: AppCompatActivity() {
         val allBlocksExceptLastTwoRows = (0..<noOfBlock*noOfBlock - 2*noOfBlock)
             .toList()
         for (i in allBlocksExceptLastTwoRows) {
-            val chosenCandy = wastes[i].tag
+            val chosenBlock = wastes[i].tag
             val isBlank: Boolean = wastes[i].tag == emptyBlock
             var x = i
-            if (wastes[x].tag as Int == chosenCandy
+            if (wastes[x].tag as Int == chosenBlock
                 && !isBlank
-                && wastes[x + noOfBlock].tag as Int == chosenCandy
-                && wastes[x + 2*noOfBlock].tag as Int == chosenCandy
-            ) {
+                && wastes[x + noOfBlock].tag as Int == chosenBlock
+                && wastes[x + 2*noOfBlock].tag as Int == chosenBlock
+                ) {
                 animatation( i + noOfBlock)
                 score += 3
-                scoreResult.text = "Score - $score"
+                scoreResult.text = "$score"
                 wastes[x].setImageResource(emptyBlock)
                 wastes[x].tag = emptyBlock
                 x += noOfBlock
