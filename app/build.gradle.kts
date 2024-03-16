@@ -51,5 +51,6 @@ dependencies {
     implementation("pl.droidsonroids.gif:android-gif-drawable:1.2.17")
     implementation("com.github.bumptech.glide:glide:4.13.0")
     implementation("androidx.gridlayout:gridlayout:1.0.0")
+    implementation("com.github.bumptech.glide:glide:4.12.0")
 
 }

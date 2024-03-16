@@ -1,15 +1,19 @@
 package com.example.bin_rush.activity
 
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.DisplayMetrics
-import android.util.Log
 import android.util.TypedValue
+import android.view.View
+import android.widget.FrameLayout
 import androidx.gridlayout.widget.GridLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
 import com.example.bin_rush.R
 import com.example.bin_rush.util.OnSwipeListener
 import kotlin.math.abs
@@ -30,16 +34,23 @@ class PlayActivity: AppCompatActivity() {
     var widthOfScreen: Int = 0
     var heightOfScreen: Int = 0
 
+    var emptyBlock: Int  = R.drawable.transparent
     lateinit var wastes: ArrayList<ImageView>
     var blockStart: Int = 0
     var blockEnd: Int = 0
-    var emptyBlock: Int  = R.drawable.transparent
+    private lateinit var imageInorganic: ImageView
+    private lateinit var imageOrganic: ImageView
+    private lateinit var imageBiohazard: ImageView
+    private lateinit var imageRecycle: ImageView
+    private lateinit var layout: View
+    private lateinit var frameLayout: FrameLayout
 
     lateinit var gridlayout: GridLayout
     lateinit var mHandler: Handler
     lateinit var scoreResult: TextView
+    lateinit var imageGarbage: ImageView
     var score = 0
-    var interval = 100L
+    var interval = 200L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +58,14 @@ class PlayActivity: AppCompatActivity() {
 
         scoreResult = findViewById(R.id.score)
         gridlayout = findViewById(R.id.board)
+        imageBiohazard = findViewById(R.id.imageBiohazard)
+        imageInorganic = findViewById(R.id.imageInorganic)
+        imageOrganic = findViewById(R.id.imageOrganic)
+        imageRecycle = findViewById(R.id.imageRecycle)
+        layout = findViewById(R.id.LinearLayout)
+        frameLayout = findViewById(R.id.frameLayout)
+        imageGarbage = findViewById(R.id.imageGarbage)
+
 
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
@@ -106,6 +125,7 @@ class PlayActivity: AppCompatActivity() {
         }
         mHandler = Handler()
         startRepeat()
+        scoreResult.text = "Score - 0"
     }
 
     private fun startRepeat() {
@@ -127,8 +147,9 @@ class PlayActivity: AppCompatActivity() {
                 && wastes[x++].tag as Int == chosenBlock
                 && wastes[x].tag as Int == chosenBlock
             ) {
+                animatation(i + 1)
                 score += 3
-                scoreResult.text = "$score"
+                scoreResult.text = "Score - $score"
                 wastes[x].setImageResource(emptyBlock)
                 wastes[x].tag = emptyBlock
                 x--
@@ -143,28 +164,29 @@ class PlayActivity: AppCompatActivity() {
     }
 
     private fun checkColumnForThree() {
-        val allBlocksExceptLastTwoRows = (0..noOfBlock*noOfBlock - 2*noOfBlock)
+        val allBlocksExceptLastTwoRows = (0..<noOfBlock*noOfBlock - 2*noOfBlock)
             .toList()
         for (i in allBlocksExceptLastTwoRows) {
             val chosenCandy = wastes[i].tag
             val isBlank: Boolean = wastes[i].tag == emptyBlock
             var x = i
-                if (wastes[x].tag as Int == chosenCandy
-                    && !isBlank
-                    && wastes[x + noOfBlock].tag as Int == chosenCandy
-                    && wastes[x + 2*noOfBlock].tag as Int == chosenCandy
-                ) {
-                    score += 3
-                    scoreResult.text = "$score"
-                    wastes[x].setImageResource(emptyBlock)
-                    wastes[x].tag = emptyBlock
-                    x += noOfBlock
-                    wastes[x].setImageResource(emptyBlock)
-                    wastes[x].tag = emptyBlock
-                    x += noOfBlock
-                    wastes[x].setImageResource(emptyBlock)
-                    wastes[x].tag = emptyBlock
-                }
+            if (wastes[x].tag as Int == chosenCandy
+                && !isBlank
+                && wastes[x + noOfBlock].tag as Int == chosenCandy
+                && wastes[x + 2*noOfBlock].tag as Int == chosenCandy
+            ) {
+                animatation( i + noOfBlock)
+                score += 3
+                scoreResult.text = "Score - $score"
+                wastes[x].setImageResource(emptyBlock)
+                wastes[x].tag = emptyBlock
+                x += noOfBlock
+                wastes[x].setImageResource(emptyBlock)
+                wastes[x].tag = emptyBlock
+                x += noOfBlock
+                wastes[x].setImageResource(emptyBlock)
+                wastes[x].tag = emptyBlock
+            }
         }
         moveBlocksDown()
     }
@@ -202,7 +224,6 @@ class PlayActivity: AppCompatActivity() {
                 checkRowForThree()
                 checkColumnForThree()
                 moveBlocksDown()
-                Log.i("com", "abc")
             }
             finally {
                 mHandler.postDelayed(this, interval)
@@ -252,9 +273,46 @@ class PlayActivity: AppCompatActivity() {
         ).toInt()
     }
 
-    private fun animatation(vararg indices: Int) {
-        for (i in indices) {
-            Log.i("com", wastes[i].x.toString())
+    private fun animatation(index: Int) {
+        wastes[index].x
+        wastes[index].y
+
+
+        val handlerX = Handler(Looper.getMainLooper())
+        val handlerY = Handler(Looper.getMainLooper())
+        val handlerZ = Handler(Looper.getMainLooper())
+        val imageView = ImageView(this)
+        val sizeInPixels = convertDpToPixel(50f, this)
+        val layoutParams = FrameLayout.LayoutParams(sizeInPixels,sizeInPixels)
+        layoutParams.leftMargin = wastes[index].x.toInt()
+        layoutParams.topMargin =  wastes[index].y.toInt()
+
+
+        imageView.setImageResource(wastes[index].tag as Int)
+
+        imageView.layoutParams = layoutParams
+
+        val density = resources.displayMetrics.density
+        val elevationInPixels = 2 * density
+        imageView.elevation = elevationInPixels
+        frameLayout.addView(imageView)
+
+        val x = imageInorganic.width / 2 - sizeInPixels / 2
+        val coordinateX = x + layout.x.toInt()
+        val runnableX = Runnable {
+            layoutParams.leftMargin = coordinateX
+            imageView.layoutParams = layoutParams
         }
+        handlerX.postDelayed(runnableX, 500)
+        val runnableY = Runnable {
+            layoutParams.topMargin = imageInorganic.y.toInt() + layout.y.toInt()
+            imageView.layoutParams = layoutParams
+        }
+        handlerY.postDelayed(runnableY, 1000)
+
+        val runnableZ = Runnable {
+            frameLayout.removeView(imageView)
+        }
+        handlerZ.postDelayed(runnableZ, 2000)
     }
 }

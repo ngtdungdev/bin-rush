@@ -7,6 +7,7 @@ import android.os.CountDownTimer
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import com.bumptech.glide.Glide
 import com.example.bin_rush.fragment.PlayGameFragment
 import com.example.bin_rush.R
 import java.util.Locale
@@ -18,6 +19,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var number: TextView
     private val initialTimeInMillis: Long = 60 * 60 * 1000
     private lateinit var btnPlay: ImageView
+    private lateinit var btnDaily: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,14 +28,26 @@ class MainActivity : AppCompatActivity() {
         number = findViewById(R.id.number)
         btnPlay = findViewById(R.id.btnPlay)
         progressBar = findViewById(R.id.progressBar)
+        btnDaily = findViewById(R.id.btnDaily)
         progressBar.max = initialTimeInMillis.toInt()
+        initView()
+    }
+
+    private fun initView() {
         val action = supportActionBar
         action?.hide()
+        Glide.with(this)
+            .asGif()
+            .load(R.drawable.benefit)
+            .into(btnDaily)
         imageView.setOnClickListener {
             startActivity(Intent(this@MainActivity, PlayActivity::class.java))
         }
         btnPlay.setOnClickListener {
             PlayGameFragment().show(supportFragmentManager , "PlayGameFragment")
+        }
+        btnDaily.setOnClickListener {
+
         }
         startTimer(initialTimeInMillis)
     }
