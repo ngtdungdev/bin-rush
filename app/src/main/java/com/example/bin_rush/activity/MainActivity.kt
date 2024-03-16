@@ -10,6 +10,7 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.example.bin_rush.fragment.PlayGameFragment
 import com.example.bin_rush.R
+import com.example.bin_rush.fragment.DateTimeFragment
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
@@ -53,7 +54,7 @@ class MainActivity : AppCompatActivity() {
             PlayGameFragment().show(supportFragmentManager , "PlayGameFragment")
         }
         btnDaily.setOnClickListener {
-
+            DateTimeFragment().show(supportFragmentManager , "DateTimeFragment")
         }
         startTimer(initialTimeInMillis)
     }
