@@ -1,4 +1,4 @@
-package com.example.bin_rush
+package com.example.bin_rush.activity
 
 import android.content.Context
 import android.os.Bundle
@@ -10,7 +10,8 @@ import androidx.gridlayout.widget.GridLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import java.util.Arrays.asList
+import com.example.bin_rush.R
+import com.example.bin_rush.util.OnSwipeListener
 import kotlin.math.abs
 import kotlin.math.floor
 
@@ -56,7 +57,7 @@ class PlayActivity: AppCompatActivity() {
 
         for(imageView in candy) {
 
-            imageView.setOnTouchListener(object :OnSwipeListener(this){
+            imageView.setOnTouchListener(object : OnSwipeListener(this){
                 override fun onSwipeLeft() {
                     super.onSwipeLeft()
                     candyToBeDragged = imageView.id
