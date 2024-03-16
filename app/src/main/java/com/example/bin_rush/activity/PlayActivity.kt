@@ -253,7 +253,7 @@ class PlayActivity: AppCompatActivity() {
                 && !isBlank
                 && wastes[x + noOfBlock].tag as Int == chosenBlock
                 && wastes[x + 2*noOfBlock].tag as Int == chosenBlock
-            ) {
+                ) {
                 animatation( i + noOfBlock)
                 score += 3
                 scoreResult.text = "$score"
