@@ -6,7 +6,7 @@ import android.util.DisplayMetrics
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import org.w3c.dom.Text
+import java.util.Arrays.asList
 
 class PlayActivity: AppCompatActivity() {
     var candies = intArrayOf(
@@ -51,28 +51,28 @@ class PlayActivity: AppCompatActivity() {
                     super.onSwipeLeft()
                     candyToBeDragged = imageView.id
                     candyToBeReplaced = candyToBeDragged - 1
-                    candyInterChacge()
+                    candyInterChange()
                 }
 
                 override fun onSwipeRight() {
                     super.onSwipeRight()
                     candyToBeDragged = imageView.id
                     candyToBeReplaced = candyToBeDragged + 1
-                    candyInterChacge()
+                    candyInterChange()
                 }
 
                 override fun onSwipeTop() {
                     super.onSwipeTop()
                     candyToBeDragged = imageView.id
                     candyToBeReplaced = candyToBeDragged - noOfBlock
-                    candyInterChacge()
+                    candyInterChange()
                 }
 
                 override fun onSwipeBottom() {
                     super.onSwipeBottom()
                     candyToBeDragged = imageView.id
                     candyToBeReplaced = candyToBeDragged + noOfBlock
-                    candyInterChacge()
+                    candyInterChange()
                 }
 
             })
@@ -101,8 +101,41 @@ class PlayActivity: AppCompatActivity() {
         }
     }
 
-    private fun candyInterChacge() {
-        TODO("Not yet implemented")
+    private fun candyInterChange() {
+        var background: Int = candy.get(candyToBeReplaced).tag as Int
+        var background1: Int = candy.get(candyToBeDragged).tag as Int
+
+        // To be swapped
+        candy.get(candyToBeDragged).setImageResource(background)
+        candy.get(candyToBeReplaced).setImageResource(background1)
+
+        candy.get(candyToBeDragged).setTag(background)
+        candy.get(candyToBeReplaced).setTag(background1)
+    }
+
+    private fun checkColumnForThree() {
+        for (i in 0..47) {
+            var chosenCandy = candy.get(i).tag
+            var isBlank: Boolean = candy.get(i).tag == notCandy
+            var x = i
+                if (candy.get(x).tag as Int == chosenCandy
+                    && !isBlank
+                    && candy.get(x+noOfBlock).tag as Int == chosenCandy
+                    && candy.get(x+2*noOfBlock).tag as Int == chosenCandy
+                ) {
+                    score = score + 3
+                    scoreResult.text = "$score"
+                    candy.get(x).setImageResource(notCandy)
+                    candy.get(x).setTag(notCandy)
+                    x = x + noOfBlock
+                    candy.get(x).setImageResource(notCandy)
+                    candy.get(x).setTag(notCandy)
+                    x = x + noOfBlock
+                    candy.get(x).setImageResource(notCandy)
+                    candy.get(x).setTag(notCandy)
+                }
+        }
+//        moveDownCandies()
     }
 
     private fun createBoard() {
