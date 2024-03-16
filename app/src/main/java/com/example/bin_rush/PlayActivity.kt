@@ -3,6 +3,7 @@ package com.example.bin_rush
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
+import android.util.Log
 import androidx.gridlayout.widget.GridLayout
 import android.widget.ImageView
 import android.widget.TextView
@@ -27,9 +28,9 @@ class PlayActivity: AppCompatActivity() {
     var heightOfScreen: Int = 0
 
     lateinit var wastes: ArrayList<ImageView>
-    var candyToBeDragged: Int = 0
-    var candyToBeReplaced: Int = 0
-    var notCandy: Int  = R.drawable.transparent
+    var blockStart: Int = 0
+    var blockEnd: Int = 0
+    var emptyBlock: Int  = R.drawable.transparent
 
     lateinit var gridlayout: GridLayout
     lateinit var mHandler: Handler
@@ -56,26 +57,43 @@ class PlayActivity: AppCompatActivity() {
         for (imageView in wastes) {
             imageView.setOnTouchListener(object: OnSwipeListener(this) {
                 override fun onSwipeLeft() {
-                    candyToBeDragged = imageView.id
-                    candyToBeReplaced = candyToBeDragged - 1
+                    val firstColumn: List<Int> = (0 until noOfBlock*noOfBlock).filter { it % noOfBlock == 0 }.toList();
+                    if (firstColumn.contains(imageView.id)) {
+                        return
+                    }
+                    blockStart = imageView.id
+                    blockEnd = blockStart - 1
                     swapBlocks()
                 }
 
                 override fun onSwipeRight() {
-                    candyToBeDragged = imageView.id
-                    candyToBeReplaced = candyToBeDragged + 1
+                    val firstColumn: List<Int> = (0 until noOfBlock*noOfBlock).filter { it % noOfBlock == noOfBlock - 1 }.toList();
+                    if (firstColumn.contains(imageView.id)) {
+                        return
+                    }
+                    blockStart = imageView.id
+                    blockEnd = blockStart + 1
                     swapBlocks()
                 }
 
                 override fun onSwipeTop() {
-                    candyToBeDragged = imageView.id
-                    candyToBeReplaced = candyToBeDragged - noOfBlock
+                    val firstRow: List<Int> = (0 until noOfBlock).toList()
+                    if (firstRow.contains(imageView.id)) {
+                        return
+                    }
+                    blockStart = imageView.id
+                    blockEnd = blockStart - noOfBlock
                     swapBlocks()
                 }
 
                 override fun onSwipeBottom() {
-                    candyToBeDragged = imageView.id
-                    candyToBeReplaced = candyToBeDragged + noOfBlock
+                    val lastElement = noOfBlock*noOfBlock - 1
+                    val lastRow: List<Int> = (lastElement downTo lastElement - noOfBlock).toList()
+                    if (lastRow.contains(imageView.id)) {
+                        return
+                    }
+                    blockStart = imageView.id
+                    blockEnd = blockStart + noOfBlock
                     swapBlocks()
                 }
 
@@ -91,39 +109,41 @@ class PlayActivity: AppCompatActivity() {
     }
 
     private fun checkRowForThree() {
-        for (i in 0..61) {
-            val chosenCandy = wastes[i].tag
-            val isBlank: Boolean = wastes[i].tag == notCandy
-            val notValid = arrayOf(6, 7, 14, 15, 22, 23, 30, 31, 38, 39, 46, 47, 54, 55)
-            val list = listOf(*notValid)
-            if (!list.contains(i)) {
-                var x = i
+        val allBlocksExceptLastTwoColumns = (0 until noOfBlock*noOfBlock - 2)
+            .filter { it % noOfBlock != noOfBlock - 1 || it % noOfBlock != noOfBlock - 2 }
+            .toList()
+        for (i in allBlocksExceptLastTwoColumns) {
+            val chosenBlock = wastes[i].tag
+            val isBlank: Boolean = wastes[i].tag == emptyBlock
 
-                if (wastes[x++].tag as Int == chosenCandy
-                    && !isBlank
-                    && wastes[x++].tag as Int == chosenCandy
-                    && wastes[x].tag as Int == chosenCandy
-                ) {
-                    score += 3
-                    scoreResult.text = "$score"
-                    wastes[x].setImageResource(notCandy)
-                    wastes[x].tag = notCandy
-                    x--
-                    wastes[x].setImageResource(notCandy)
-                    wastes[x].tag = notCandy
-                    x--
-                    wastes[x].setImageResource(notCandy)
-                    wastes[x].tag = notCandy
-                }
+            var x = i
+
+            if (wastes[x++].tag as Int == chosenBlock
+                && !isBlank
+                && wastes[x++].tag as Int == chosenBlock
+                && wastes[x].tag as Int == chosenBlock
+            ) {
+                score += 3
+                scoreResult.text = "$score"
+                wastes[x].setImageResource(emptyBlock)
+                wastes[x].tag = emptyBlock
+                x--
+                wastes[x].setImageResource(emptyBlock)
+                wastes[x].tag = emptyBlock
+                x--
+                wastes[x].setImageResource(emptyBlock)
+                wastes[x].tag = emptyBlock
             }
         }
-        moveDownCandies()
+        moveBlocksDown()
     }
 
     private fun checkColumnForThree() {
-        for (i in 0..47) {
+        val allBlocksExceptLastTwoRows = (0..noOfBlock*noOfBlock - 2*noOfBlock)
+            .toList()
+        for (i in allBlocksExceptLastTwoRows) {
             val chosenCandy = wastes[i].tag
-            val isBlank: Boolean = wastes[i].tag == notCandy
+            val isBlank: Boolean = wastes[i].tag == emptyBlock
             var x = i
                 if (wastes[x].tag as Int == chosenCandy
                     && !isBlank
@@ -132,31 +152,31 @@ class PlayActivity: AppCompatActivity() {
                 ) {
                     score += 3
                     scoreResult.text = "$score"
-                    wastes[x].setImageResource(notCandy)
-                    wastes[x].tag = notCandy
+                    wastes[x].setImageResource(emptyBlock)
+                    wastes[x].tag = emptyBlock
                     x += noOfBlock
-                    wastes[x].setImageResource(notCandy)
-                    wastes[x].tag = notCandy
+                    wastes[x].setImageResource(emptyBlock)
+                    wastes[x].tag = emptyBlock
                     x += noOfBlock
-                    wastes[x].setImageResource(notCandy)
-                    wastes[x].tag = notCandy
+                    wastes[x].setImageResource(emptyBlock)
+                    wastes[x].tag = emptyBlock
                 }
         }
-        moveDownCandies()
+        moveBlocksDown()
     }
 
-    private fun moveDownCandies() {
-        val firstRow: List<Int> = List(noOfBlock) { it }
-        for (i in 55 downTo 0) {
-            if (wastes[i + noOfBlock].tag as Int == notCandy) {
+    private fun moveBlocksDown() {
+        val firstRow: List<Int> = (0 until noOfBlock).toList()
+        for (i in noOfBlock*noOfBlock - noOfBlock - 1 downTo  0) {
+            if (wastes[i + noOfBlock].tag as Int == emptyBlock) {
                 wastes[i + noOfBlock].setImageResource(wastes[i].tag as Int)
                 wastes[i + noOfBlock].tag = wastes[i].tag as Int
 
-                wastes[i].setImageResource(notCandy)
-                wastes[i].tag = notCandy
+                wastes[i].setImageResource(emptyBlock)
+                wastes[i].tag = emptyBlock
 
                 // if the first row is blank
-                if (firstRow.contains(i) && wastes[i].tag == notCandy) {
+                if (firstRow.contains(i) && wastes[i].tag == emptyBlock) {
                     val randomColor: Int = abs(Math.random() * WASTE_TYPE.size).toInt()
                     wastes[i].setImageResource(WASTE_TYPE[randomColor])
                     wastes[i].tag = WASTE_TYPE[randomColor]
@@ -164,7 +184,7 @@ class PlayActivity: AppCompatActivity() {
             }
         }
         for (i in firstRow) {
-            if (wastes[i].tag as Int == notCandy) {
+            if (wastes[i].tag as Int == emptyBlock) {
                 val randomColor: Int = abs(Math.random() * WASTE_TYPE.size).toInt()
                 wastes[i].setImageResource(WASTE_TYPE[randomColor])
                 wastes[i].tag = WASTE_TYPE[randomColor]
@@ -177,7 +197,8 @@ class PlayActivity: AppCompatActivity() {
             try {
                 checkRowForThree()
                 checkColumnForThree()
-                moveDownCandies()
+                moveBlocksDown()
+                Log.i("com", "abc")
             }
             finally {
                 mHandler.postDelayed(this, interval)
@@ -186,14 +207,14 @@ class PlayActivity: AppCompatActivity() {
     }
 
     private fun swapBlocks() {
-        val background: Int = wastes[candyToBeReplaced].tag as Int
-        val background1: Int = wastes[candyToBeDragged].tag as Int
+        val background: Int = wastes[blockEnd].tag as Int
+        val background1: Int = wastes[blockStart].tag as Int
 
-        wastes[candyToBeDragged].setImageResource(background)
-        wastes[candyToBeDragged].tag = background
+        wastes[blockStart].setImageResource(background)
+        wastes[blockStart].tag = background
 
-        wastes[candyToBeReplaced].setImageResource(background1)
-        wastes[candyToBeReplaced].tag = background1
+        wastes[blockEnd].setImageResource(background1)
+        wastes[blockEnd].tag = background1
     }
 
     private fun createBoard() {
