@@ -1,13 +1,14 @@
-package com.example.bin_rush
+package com.example.bin_rush.activity
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.os.Handler
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import com.example.bin_rush.fragment.PlayGameFragment
+import com.example.bin_rush.R
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
