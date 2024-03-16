@@ -29,8 +29,11 @@
 
         <androidx.gridlayout.widget.GridLayout
             android:id="@+id/board"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="400dp"
+            android:layout_height="400dp"
+            android:layout_gravity="center"
+            android:stretchMode="columnWidth"
+            android:background="#8B615757"
             app:orientation="horizontal" />
     </FrameLayout>
 </LinearLayout>

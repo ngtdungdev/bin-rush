@@ -1,8 +1,10 @@
 package com.example.bin_rush
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
+import android.util.TypedValue
 import androidx.gridlayout.widget.GridLayout
 import android.widget.ImageView
 import android.widget.TextView
@@ -19,7 +21,6 @@ class PlayActivity: AppCompatActivity() {
         R.drawable.metal,
         R.drawable.plastic,
         R.drawable.paper
-
     )
     var widthOfBlock:Int = 0
     var noOfBlock:Int = 8
@@ -47,7 +48,7 @@ class PlayActivity: AppCompatActivity() {
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         widthOfScreen = displayMetrics.widthPixels
 
-        heightOfScreen = displayMetrics.heightPixels
+        heightOfScreen = widthOfScreen + 10
         widthOfBlock = widthOfScreen / noOfBlock
         candy = ArrayList()
         createBoard()
@@ -141,22 +142,22 @@ class PlayActivity: AppCompatActivity() {
             var chosenCandy = candy[i].tag
             var isBlank: Boolean = candy[i].tag == notCandy
             var x = i
-                if (candy[x].tag as Int == chosenCandy
-                    && !isBlank
-                    && candy[x+noOfBlock].tag as Int == chosenCandy
-                    && candy[x+2*noOfBlock].tag as Int == chosenCandy
-                ) {
-                    score += 3
-                    scoreResult.text = "$score"
-                    candy[x].setImageResource(notCandy)
-                    candy[x].setTag(notCandy)
-                    x += noOfBlock
-                    candy[x].setImageResource(notCandy)
-                    candy[x].tag = notCandy
-                    x += noOfBlock
-                    candy[x].setImageResource(notCandy)
-                    candy[x].tag = notCandy
-                }
+            if (candy[x].tag as Int == chosenCandy
+                && !isBlank
+                && candy[x+noOfBlock].tag as Int == chosenCandy
+                && candy[x+2*noOfBlock].tag as Int == chosenCandy
+            ) {
+                score += 3
+                scoreResult.text = "$score"
+                candy[x].setImageResource(notCandy)
+                candy[x].tag = notCandy
+                x += noOfBlock
+                candy[x].setImageResource(notCandy)
+                candy[x].tag = notCandy
+                x += noOfBlock
+                candy[x].setImageResource(notCandy)
+                candy[x].tag = notCandy
+            }
         }
         moveDownCandies()
     }
@@ -207,12 +208,27 @@ class PlayActivity: AppCompatActivity() {
         for ( i in 0 until 64) {
             val imageView = ImageView(this)
             imageView.id = i
-            imageView.layoutParams = android.view.ViewGroup.LayoutParams(widthOfBlock, widthOfBlock)
+            val sizeInPixels = convertDpToPixel(50f, this)
+            val layoutParams = GridLayout.LayoutParams(
+                android.view.ViewGroup.LayoutParams(sizeInPixels, sizeInPixels)
+            )
+            val margin = 2
+            layoutParams.setMargins(margin, margin, margin, margin)
+            imageView.layoutParams = layoutParams
+
             var random: Int = floor(Math.random() * candies.size).toInt()
             imageView.setImageResource(candies[random])
             imageView.tag = candies[random]
             candy.add(imageView)
             gridlayout.addView(imageView)
         }
+    }
+
+    private fun convertDpToPixel(dp: Float, context: Context): Int {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp,
+            context.resources.displayMetrics
+        ).toInt()
     }
 }
