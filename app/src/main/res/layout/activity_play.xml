@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/candy_background"
+    android:background="@drawable/candy_background1"
     android:orientation="vertical">
 
     <FrameLayout
@@ -12,7 +12,7 @@
         android:background="#60675B5B">
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/score"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
