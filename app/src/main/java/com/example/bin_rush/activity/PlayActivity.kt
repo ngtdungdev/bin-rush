@@ -20,38 +20,36 @@ import kotlin.math.floor
 
 class PlayActivity: AppCompatActivity() {
     private val WASTE_TYPE = intArrayOf(
-        R.drawable.apple,
+//        R.drawable.apple,
         R.drawable.banana,
         R.drawable.battery_status,
         R.drawable.bottle,
-        R.drawable.broken_glass,
-        R.drawable.dirty_clothes,
+//        R.drawable.broken_glass,
+//        R.drawable.dirty_clothes,
         R.drawable.fish_bone,
-        R.drawable.food_waste,
-        R.drawable.glass_bottle,
+//        R.drawable.glass_bottle,
         R.drawable.metal,
-        R.drawable.mineral_water,
+//        R.drawable.mineral_water,
         R.drawable.plastic,
         R.drawable.paper,
         R.drawable.vaccine,
-        R.drawable.waste,
+//        R.drawable.waste,
     )
     private val classification = mapOf(
-        R.drawable.apple to 2,
+//        R.drawable.apple to 2,
         R.drawable.banana to 2,
         R.drawable.battery_status to 3,
         R.drawable.bottle to 4,
-        R.drawable.broken_glass to 4,
-        R.drawable.dirty_clothes to 1,
+//        R.drawable.broken_glass to 4,
+//        R.drawable.dirty_clothes to 1,
         R.drawable.fish_bone to 2,
-        R.drawable.food_waste to 2,
-        R.drawable.glass_bottle to 4,
+//        R.drawable.glass_bottle to 4,
         R.drawable.metal to 1,
-        R.drawable.mineral_water to 4,
+//        R.drawable.mineral_water to 4,
         R.drawable.plastic to 4,
         R.drawable.paper to 1,
         R.drawable.vaccine to 3,
-        R.drawable.waste to 3,
+//        R.drawable.waste to 3,
     )
 
     var widthOfBlock: Int = 0
@@ -279,10 +277,10 @@ class PlayActivity: AppCompatActivity() {
                 && !isBlank
                 && wastes[x + noOfBlock].tag as Int == chosenBlock
                 && wastes[x + 2*noOfBlock].tag as Int == chosenBlock
-                ) {
+            ) {
                 animation( i + noOfBlock)
                 score += 3
-                scoreResult.text = "$score"
+                scoreResult.text = "Score - $score"
                 wastes[x].setImageResource(emptyBlock)
                 wastes[x].tag = emptyBlock
                 x += noOfBlock
