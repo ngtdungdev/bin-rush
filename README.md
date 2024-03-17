@@ -1,5 +1,4 @@
-![image](https://github.com/ngtdungdev/bin-rush/assets/136802310/2616c021-6fe2-4cea-a193-7bcaa3ef30d7)# Bin Rush
-
+- GreenRush - by R.I.P deadline -
 
 *Đặt vấn đề:
 Trong bối cảnh hiện đại, môi trường đang đối mặt với những thách thức nghiêm trọng như ô nhiễm nước, ô nhiễm không khí, rác thải, biến đổi khí hậu, suy giảm đa dạng sinh học...
