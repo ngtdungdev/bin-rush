@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.Log
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -11,6 +12,10 @@ import com.bumptech.glide.Glide
 import com.example.bin_rush.fragment.PlayGameFragment
 import com.example.bin_rush.R
 import com.example.bin_rush.fragment.DateTimeFragment
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.database
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
@@ -23,7 +28,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnDaily: ImageView
     private lateinit var imageTree: ImageView
     private lateinit var imageWater: ImageView
-
+    private lateinit var experience: ProgressBar
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -34,10 +39,12 @@ class MainActivity : AppCompatActivity() {
         imageTree = findViewById(R.id.imageTree)
         imageWater =  findViewById(R.id.imageWater)
         btnDaily = findViewById(R.id.btnDaily)
+        experience = findViewById(R.id.experience)
         progressBar.max = initialTimeInMillis.toInt()
         initView()
     }
 
+    private lateinit var database: DatabaseReference
     private fun initView() {
         val action = supportActionBar
         action?.hide()
@@ -53,6 +60,8 @@ class MainActivity : AppCompatActivity() {
             .asGif()
             .load(R.drawable.water_drop)
             .into(imageWater)
+        experience.max = 100
+        experience.progress = 25
         imageView.setOnClickListener {
             startActivity(Intent(this@MainActivity, PlayActivity::class.java))
         }
@@ -62,9 +71,18 @@ class MainActivity : AppCompatActivity() {
         btnDaily.setOnClickListener {
             DateTimeFragment().show(supportFragmentManager , "DateTimeFragment")
         }
+        database = Firebase.database.getReference("const")
         startTimer(initialTimeInMillis)
+
     }
 
+    private fun getLevelUp(id : Int) {
+        database.child("_TREE_LEVELS").child(id.toString()).child("level_up").get().addOnSuccessListener {
+            it.value.toString()
+        }.addOnFailureListener{
+            Log.i("firebase", "Error getting data", it)
+        }
+    }
     private fun startTimer(timeInMillis: Long) {
         countDownTimer = object : CountDownTimer(timeInMillis, 1000) {
             override fun onTick(millisUntilFinished: Long) {
