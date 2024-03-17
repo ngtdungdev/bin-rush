@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
             .into(btnDaily)
         Glide.with(this)
             .asGif()
-            .load(R.drawable.lvl1)
+            .load(R.drawable.lvl3)
             .into(imageTree)
         imageView.setOnClickListener {
             startActivity(Intent(this@MainActivity, PlayActivity::class.java))
