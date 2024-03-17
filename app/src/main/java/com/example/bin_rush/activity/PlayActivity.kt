@@ -2,6 +2,7 @@ package com.example.bin_rush.activity
 
 import android.content.Context
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
 import android.util.DisplayMetrics
@@ -11,6 +12,7 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.gridlayout.widget.GridLayout
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.bin_rush.R
@@ -68,18 +70,23 @@ class PlayActivity: AppCompatActivity() {
     private lateinit var imageRecycle: ImageView
     private lateinit var layout: View
     private lateinit var frameLayout: FrameLayout
+    private lateinit var imageClock: ImageView
+    private lateinit var progressBar: ProgressBar
 
+    private var timerDuration: Long = 20000
+    private var countDownInterval: Long = 1000
     lateinit var gridlayout: GridLayout
     lateinit var mHandler: Handler
     lateinit var scoreResult: TextView
-    lateinit var imageGarbage: ImageView
     var score = 0
     var interval = 200L
+    private var countDownTimer: CountDownTimer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_play)
 
+        progressBar = findViewById(R.id.progressBar)
         scoreResult = findViewById(R.id.score)
         gridlayout = findViewById(R.id.board)
         imageBiohazard = findViewById(R.id.imageBiohazard)
@@ -88,7 +95,16 @@ class PlayActivity: AppCompatActivity() {
         imageRecycle = findViewById(R.id.imageRecycle)
         layout = findViewById(R.id.LinearLayout)
         frameLayout = findViewById(R.id.frameLayout)
-        imageGarbage = findViewById(R.id.imageGarbage)
+        imageClock = findViewById(R.id.imageClock)
+
+
+        Glide.with(this)
+            .asGif()
+            .load(R.drawable.clock)
+            .into(imageClock)
+
+        progressBar.max = (timerDuration / countDownInterval).toInt()
+        startCountDown(timerDuration, countDownInterval)
 
 
         val displayMetrics = DisplayMetrics()
@@ -172,6 +188,16 @@ class PlayActivity: AppCompatActivity() {
         scoreResult.text = "Score - 0"
     }
 
+    private fun startCountDown(duration: Long, interval: Long) {
+        object : CountDownTimer(duration, interval) {
+            override fun onTick(millisUntilFinished: Long) {
+                progressBar.progress = (millisUntilFinished / countDownInterval).toInt()
+            }
+            override fun onFinish() {
+                finish()
+            }
+        }.start()
+    }
     private fun check(index: Int): Boolean {
         val case1 = checkRowFor3(index)
         val case2 = checkColumnFor3(index)

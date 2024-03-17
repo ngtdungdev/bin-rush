@@ -22,6 +22,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnPlay: ImageView
     private lateinit var btnDaily: ImageView
     private lateinit var imageTree: ImageView
+    private lateinit var imageWater: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +32,7 @@ class MainActivity : AppCompatActivity() {
         btnPlay = findViewById(R.id.btnPlay)
         progressBar = findViewById(R.id.progressBar)
         imageTree = findViewById(R.id.imageTree)
+        imageWater =  findViewById(R.id.imageWater)
         btnDaily = findViewById(R.id.btnDaily)
         progressBar.max = initialTimeInMillis.toInt()
         initView()
@@ -47,6 +49,10 @@ class MainActivity : AppCompatActivity() {
             .asGif()
             .load(R.drawable.lvl3)
             .into(imageTree)
+        Glide.with(this)
+            .asGif()
+            .load(R.drawable.water_drop)
+            .into(imageWater)
         imageView.setOnClickListener {
             startActivity(Intent(this@MainActivity, PlayActivity::class.java))
         }
