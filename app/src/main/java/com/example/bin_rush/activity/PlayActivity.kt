@@ -15,6 +15,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
 import com.example.bin_rush.R
 import com.example.bin_rush.util.OnSwipeListener
 import kotlin.math.abs
@@ -22,13 +23,13 @@ import kotlin.math.floor
 
 class PlayActivity: AppCompatActivity() {
     private val WASTE_TYPE = intArrayOf(
-//        R.drawable.apple,
+        R.drawable.apple,
         R.drawable.banana,
         R.drawable.battery_status,
         R.drawable.bottle,
 //        R.drawable.broken_glass,
 //        R.drawable.dirty_clothes,
-        R.drawable.fish_bone,
+//        R.drawable.fish_bone,
 //        R.drawable.glass_bottle,
         R.drawable.metal,
 //        R.drawable.mineral_water,
@@ -38,13 +39,13 @@ class PlayActivity: AppCompatActivity() {
 //        R.drawable.waste,
     )
     private val classification = mapOf(
-//        R.drawable.apple to 2,
+        R.drawable.apple to 2,
         R.drawable.banana to 2,
         R.drawable.battery_status to 3,
         R.drawable.bottle to 4,
 //        R.drawable.broken_glass to 4,
 //        R.drawable.dirty_clothes to 1,
-        R.drawable.fish_bone to 2,
+//        R.drawable.fish_bone to 2,
 //        R.drawable.glass_bottle to 4,
         R.drawable.metal to 1,
 //        R.drawable.mineral_water to 4,
@@ -80,7 +81,8 @@ class PlayActivity: AppCompatActivity() {
     lateinit var scoreResult: TextView
     var score = 0
     var interval = 200L
-    private var countDownTimer: CountDownTimer? = null
+    private var remainingTime: Long = 20000L
+    private var timer: CountDownTimer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -189,15 +191,29 @@ class PlayActivity: AppCompatActivity() {
     }
 
     private fun startCountDown(duration: Long, interval: Long) {
-        object : CountDownTimer(duration, interval) {
+        stopTimer()  // Stop any existing timer before starting a new one
+        timer = object : CountDownTimer(duration, interval) {
             override fun onTick(millisUntilFinished: Long) {
                 progressBar.progress = (millisUntilFinished / countDownInterval).toInt()
             }
+
             override fun onFinish() {
                 finish()
             }
         }.start()
     }
+
+    private fun addTime(additionalTime: Long) {
+        stopTimer()  // Stop the current timer before adding time
+        val newDuration = remainingTime + additionalTime
+        startCountDown(newDuration, interval)  // Restart with the updated duration
+    }
+
+    private fun stopTimer() {
+        timer?.cancel()
+        timer = null
+    }
+
     private fun check(index: Int): Boolean {
         val case1 = checkRowFor3(index)
         val case2 = checkColumnFor3(index)
@@ -277,6 +293,7 @@ class PlayActivity: AppCompatActivity() {
                 && wastes[x].tag as Int == chosenBlock
             ) {
                 animation(i + 1)
+                addTime(3000)
                 score += 3
                 scoreResult.text = "Score - $score"
                 wastes[x].setImageResource(emptyBlock)
@@ -305,6 +322,7 @@ class PlayActivity: AppCompatActivity() {
                 && wastes[x + 2*noOfBlock].tag as Int == chosenBlock
             ) {
                 animation( i + noOfBlock)
+                addTime(3000)
                 score += 3
                 scoreResult.text = "Score - $score"
                 wastes[x].setImageResource(emptyBlock)
