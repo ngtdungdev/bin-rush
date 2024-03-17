@@ -1,11 +1,11 @@
 package com.example.bin_rush.activity
 
-import android.animation.ObjectAnimator
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.DisplayMetrics
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.widget.FrameLayout
@@ -13,20 +13,43 @@ import androidx.gridlayout.widget.GridLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.bumptech.glide.Glide
 import com.example.bin_rush.R
 import com.example.bin_rush.util.OnSwipeListener
 import kotlin.math.abs
 import kotlin.math.floor
 
 class PlayActivity: AppCompatActivity() {
-    private var WASTE_TYPE = intArrayOf(
-        R.drawable.apple,
+    private val WASTE_TYPE = intArrayOf(
+//        R.drawable.apple,
         R.drawable.banana,
+        R.drawable.battery_status,
         R.drawable.bottle,
+//        R.drawable.broken_glass,
+//        R.drawable.dirty_clothes,
+        R.drawable.fish_bone,
+//        R.drawable.glass_bottle,
         R.drawable.metal,
+//        R.drawable.mineral_water,
         R.drawable.plastic,
-        R.drawable.paper
+        R.drawable.paper,
+        R.drawable.vaccine,
+//        R.drawable.waste,
+    )
+    private val classification = mapOf(
+//        R.drawable.apple to 2,
+        R.drawable.banana to 2,
+        R.drawable.battery_status to 3,
+        R.drawable.bottle to 4,
+//        R.drawable.broken_glass to 4,
+//        R.drawable.dirty_clothes to 1,
+        R.drawable.fish_bone to 2,
+//        R.drawable.glass_bottle to 4,
+        R.drawable.metal to 1,
+//        R.drawable.mineral_water to 4,
+        R.drawable.plastic to 4,
+        R.drawable.paper to 1,
+        R.drawable.vaccine to 3,
+//        R.drawable.waste to 3,
     )
 
     var widthOfBlock: Int = 0
@@ -227,7 +250,7 @@ class PlayActivity: AppCompatActivity() {
                 && wastes[x++].tag as Int == chosenBlock
                 && wastes[x].tag as Int == chosenBlock
             ) {
-                animatation(i + 1)
+                animation(i + 1)
                 score += 3
                 scoreResult.text = "Score - $score"
                 wastes[x].setImageResource(emptyBlock)
@@ -254,10 +277,10 @@ class PlayActivity: AppCompatActivity() {
                 && !isBlank
                 && wastes[x + noOfBlock].tag as Int == chosenBlock
                 && wastes[x + 2*noOfBlock].tag as Int == chosenBlock
-                ) {
-                animatation( i + noOfBlock)
+            ) {
+                animation( i + noOfBlock)
                 score += 3
-                scoreResult.text = "$score"
+                scoreResult.text = "Score - $score"
                 wastes[x].setImageResource(emptyBlock)
                 wastes[x].tag = emptyBlock
                 x += noOfBlock
@@ -364,23 +387,19 @@ class PlayActivity: AppCompatActivity() {
         ).toInt()
     }
 
-    private fun animatation(index: Int) {
-        wastes[index].x
-        wastes[index].y
-
+    private fun animation(index: Int) {
+        val icon = wastes[index].tag as Int
 
         val handlerX = Handler(Looper.getMainLooper())
         val handlerY = Handler(Looper.getMainLooper())
         val handlerZ = Handler(Looper.getMainLooper())
         val imageView = ImageView(this)
         val sizeInPixels = convertDpToPixel(50f, this)
-        val layoutParams = FrameLayout.LayoutParams(sizeInPixels,sizeInPixels)
+        val layoutParams = FrameLayout.LayoutParams(sizeInPixels, sizeInPixels)
         layoutParams.leftMargin = wastes[index].x.toInt()
         layoutParams.topMargin =  wastes[index].y.toInt()
 
-
-        imageView.setImageResource(wastes[index].tag as Int)
-
+        imageView.setImageResource(icon)
         imageView.layoutParams = layoutParams
 
         val density = resources.displayMetrics.density
@@ -388,7 +407,26 @@ class PlayActivity: AppCompatActivity() {
         imageView.elevation = elevationInPixels
         frameLayout.addView(imageView)
 
-        val x = imageInorganic.width / 2 - sizeInPixels / 2
+//        val x = imageInorganic.width / 2 - sizeInPixels / 2
+        for (i in classification) {
+            Log.i("com", i.toString())
+        }
+        Log.i("com", classification[icon].toString())
+        var x: Int = 0;
+        when (classification[icon]) {
+            1 -> {
+                x = (imageInorganic.x + imageInorganic.width / 2 - sizeInPixels / 2).toInt()
+            }
+            2 -> {
+                x = (imageOrganic.x + imageOrganic.width / 2 - sizeInPixels / 2).toInt()
+            }
+            3 -> {
+                x = (imageBiohazard.x + imageBiohazard.width / 2 - sizeInPixels / 2).toInt()
+            }
+            4 -> {
+                x = (imageRecycle.x + imageRecycle.width / 2 - sizeInPixels / 2).toInt()
+            }
+        }
         val coordinateX = x + layout.x.toInt()
         val runnableX = Runnable {
             layoutParams.leftMargin = coordinateX
