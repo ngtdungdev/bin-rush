@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bin_rush.activity.PlayActivity
+import com.example.bin_rush.activity.PlayActivity1
 import com.example.bin_rush.DTO.Game
 import com.example.bin_rush.R
 import com.example.bin_rush.adapter.GameAdapter
@@ -44,6 +45,7 @@ class PlayGameFragment : DialogFragment(){
             override fun onItemClick(position: Int) {
                 when (position){
                     0 -> {startActivity(Intent(requireContext(), PlayActivity::class.java))}
+                    1 -> {startActivity(Intent(requireContext(), PlayActivity1::class.java))}
                 }
             }
         })
