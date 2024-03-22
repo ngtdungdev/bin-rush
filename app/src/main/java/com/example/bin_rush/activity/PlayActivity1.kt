@@ -1,6 +1,7 @@
 package com.example.bin_rush.activity
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
@@ -90,7 +91,7 @@ class PlayActivity1 : AppCompatActivity() {
                 val boardWidth = frameLayout.width
                 val boardHeight = frameLayout.height
 
-                repeat(100) {
+                repeat(60) {
                     addImageView(boardWidth, boardHeight)
                 }
             }
@@ -127,7 +128,7 @@ class PlayActivity1 : AppCompatActivity() {
     }
 
     private inner class MyTouchListener : View.OnTouchListener {
-        @SuppressLint("ClickableViewAccessibility")
+        @SuppressLint("ClickableViewAccessibility", "InflateParams")
         override fun onTouch(view: View, event: MotionEvent): Boolean {
             val x = event.rawX.toInt()
             val y = event.rawY.toInt()
@@ -177,7 +178,7 @@ class PlayActivity1 : AppCompatActivity() {
                     val xBiohazard = locationBiohazard[0]
                     val xRecycle = locationRecycle[0]
 
-
+                    var gameOver = false
                     val wasteType = view.tag as? Int
                     val classificationOfWaste = classification[wasteType]
                     if (wasteType != null && dropY < 120) {
@@ -188,9 +189,28 @@ class PlayActivity1 : AppCompatActivity() {
                         else if (dropX >= xBiohazard - xOrganic/4 && dropX < xRecycle - xOrganic*2/3 && classificationOfWaste == 3)
                             frameLayout.removeView(view)
                         else if (dropX >= xRecycle - xOrganic/4 && classificationOfWaste == 4) frameLayout.removeView(view)
-                        else Log.d("GameOver","fail")
-                    } else {
-                        Log.e("Error", "Invalid view tag type")
+                        else {
+                            gameOver = true
+                            frameLayout.removeView(view)
+                        }
+                    }
+
+                    if (gameOver) {
+                        frameLayout.removeView(view)
+                        val dialogView = layoutInflater.inflate(R.layout.dialog_custom, null)
+                        val dialogIcon = dialogView.findViewById<ImageView>(R.id.dialog_icon)
+                        dialogIcon.setImageResource(R.drawable.icon_game)
+
+                        val builder = AlertDialog.Builder(this@PlayActivity1)
+                            .setTitle("Game Over")
+                            .setMessage("You have lost the game.")
+                            .setView(dialogView)
+                            .setPositiveButton("Exit") { dialog, which ->
+                                finish()
+                            }
+                        val dialog = builder.create()
+                        dialog.setCanceledOnTouchOutside(false)
+                        dialog.show()
                     }
                 }
             }
