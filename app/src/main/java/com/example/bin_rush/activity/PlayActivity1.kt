@@ -3,7 +3,6 @@ package com.example.bin_rush.activity
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewTreeObserver
@@ -14,7 +13,7 @@ import com.example.bin_rush.R
 import kotlin.random.Random
 
 class PlayActivity1 : AppCompatActivity() {
-    private val wasteType = intArrayOf(
+    private val WASTE_TYPE = intArrayOf(
         R.drawable.apple,
         R.drawable.apple_core,
         R.drawable.banana,
@@ -100,7 +99,7 @@ class PlayActivity1 : AppCompatActivity() {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun addImageView(boardWidth: Int, boardHeight: Int) {
-        val randomWasteType = wasteType.random()
+        val randomWasteType = WASTE_TYPE.random()
         val imageView = ImageView(this@PlayActivity1)
         imageView.setImageResource(randomWasteType)
         imageView.tag = randomWasteType

@@ -105,10 +105,10 @@
         android:id="@+id/layoutHeart"
         android:layout_width="100dp"
         android:layout_height="40dp"
-        android:layout_alignBottom="@+id/imageTree"
         android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:layout_marginStart="0dp"
-        android:layout_marginBottom="110dp"
+        android:layout_marginTop="270dp"
         android:orientation="horizontal">
 
         <ImageView
@@ -116,21 +116,48 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/heart" />
+            android:background="@drawable/heart"
+            android:visibility="visible"/>
 
         <ImageView
             android:id="@+id/imageHeart2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/heart" />
+            android:background="@drawable/heart"
+            android:visibility="visible"/>
 
         <ImageView
             android:id="@+id/imageHeart3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/heart" />
+            android:background="@drawable/heart"
+            android:visibility="visible"/>
+
+        <ImageView
+            android:id="@+id/imageUnHeart1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/unheart"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/imageUnHeart2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/unheart"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/imageUnHeart3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/unheart"
+            android:visibility="gone" />
     </LinearLayout>
 
     <TextView
