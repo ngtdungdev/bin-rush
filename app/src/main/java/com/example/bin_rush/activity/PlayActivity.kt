@@ -4,8 +4,6 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
@@ -20,7 +18,6 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.example.bin_rush.R
 import com.example.bin_rush.util.OnSwipeListener
@@ -104,7 +101,6 @@ class PlayActivity: AppCompatActivity() {
             progressBar.max = (timerDuration / countDownInterval).toInt()
             countDownTimer = startCountDown(timerDuration, countDownInterval)
             scoreResult.text = "Score - 0"
-
         }
         handler.postDelayed(runnable, 2000)
 
@@ -202,7 +198,7 @@ class PlayActivity: AppCompatActivity() {
                 progressBar.progress = (millisUntilFinished / interval).toInt()
             }
             override fun onFinish() {
-                val dialogView = layoutInflater.inflate(R.layout.dialog_custom, null)
+                val dialogView = layoutInflater.inflate(R.layout.dialog_custom_lost, null)
                 val dialogIcon = dialogView.findViewById<ImageView>(R.id.dialog_icon)
                 dialogIcon.setImageResource(R.drawable.icon_game)
                 val builder = AlertDialog.Builder(this@PlayActivity)
@@ -210,9 +206,8 @@ class PlayActivity: AppCompatActivity() {
                     .setMessage("You have lost the game.")
                     .setView(dialogView)
                     .setPositiveButton("Exit") { dialog, which ->
-                        var number = score / 100
                         val returnIntent = Intent()
-                        returnIntent.putExtra("result", number)
+                        returnIntent.putExtra("result", 1)
                         setResult(Activity.RESULT_OK, returnIntent)
                         finish()
                     }
