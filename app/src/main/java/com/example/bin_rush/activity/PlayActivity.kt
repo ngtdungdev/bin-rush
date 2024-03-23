@@ -1,6 +1,11 @@
 package com.example.bin_rush.activity
 
+import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
@@ -15,6 +20,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.example.bin_rush.R
 import com.example.bin_rush.util.OnSwipeListener
@@ -59,6 +65,7 @@ class PlayActivity: AppCompatActivity() {
     private lateinit var frameLayout: FrameLayout
     private lateinit var imageClock: ImageView
     private lateinit var progressBar: ProgressBar
+    private lateinit var layoutLoading: View
 
     private var timerDuration: Long = 20000
     private var countDownInterval: Long = 1000
@@ -67,7 +74,6 @@ class PlayActivity: AppCompatActivity() {
     lateinit var scoreResult: TextView
     var score = 0
     var interval = 200L
-    private var countDownTimer: CountDownTimer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,6 +89,7 @@ class PlayActivity: AppCompatActivity() {
         layout = findViewById(R.id.LinearLayout)
         frameLayout = findViewById(R.id.frameLayout)
         imageClock = findViewById(R.id.imageClock)
+        layoutLoading = findViewById(R.id.layoutLoading)
 
 
         Glide.with(this)
@@ -90,9 +97,16 @@ class PlayActivity: AppCompatActivity() {
             .load(R.drawable.clock)
             .into(imageClock)
 
-        progressBar.max = (timerDuration / countDownInterval).toInt()
-        startCountDown(timerDuration, countDownInterval)
 
+        val handler = Handler(Looper.getMainLooper())
+        val runnable = Runnable {
+            layoutLoading.visibility = View.GONE
+            progressBar.max = (timerDuration / countDownInterval).toInt()
+            countDownTimer = startCountDown(timerDuration, countDownInterval)
+            scoreResult.text = "Score - 0"
+
+        }
+        handler.postDelayed(runnable, 2000)
 
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
@@ -172,16 +186,39 @@ class PlayActivity: AppCompatActivity() {
         }
         mHandler = Handler()
         startRepeat()
-        scoreResult.text = "Score - 0"
     }
 
-    private fun startCountDown(duration: Long, interval: Long) {
-        object : CountDownTimer(duration, interval) {
+    private lateinit var countDownTimer: CountDownTimer
+    private var timeLeftInMillis: Long = timerDuration
+
+    private fun startRepeatCountDown(duration: Long, interval: Long) {
+        countDownTimer.cancel()
+        countDownTimer = startCountDown(duration, interval)
+    }
+    private fun startCountDown(duration: Long, interval: Long): CountDownTimer {
+        return object : CountDownTimer(duration, interval) {
             override fun onTick(millisUntilFinished: Long) {
-                progressBar.progress = (millisUntilFinished / countDownInterval).toInt()
+                timeLeftInMillis = millisUntilFinished
+                progressBar.progress = (millisUntilFinished / interval).toInt()
             }
             override fun onFinish() {
-                finish()
+                val dialogView = layoutInflater.inflate(R.layout.dialog_custom, null)
+                val dialogIcon = dialogView.findViewById<ImageView>(R.id.dialog_icon)
+                dialogIcon.setImageResource(R.drawable.icon_game)
+                val builder = AlertDialog.Builder(this@PlayActivity)
+                    .setTitle("Game Over")
+                    .setMessage("You have lost the game.")
+                    .setView(dialogView)
+                    .setPositiveButton("Exit") { dialog, which ->
+                        var number = score / 100
+                        val returnIntent = Intent()
+                        returnIntent.putExtra("result", number)
+                        setResult(Activity.RESULT_OK, returnIntent)
+                        finish()
+                    }
+                val dialog = builder.create()
+                dialog.setCanceledOnTouchOutside(false)
+                dialog.show()
             }
         }.start()
     }
@@ -454,6 +491,10 @@ class PlayActivity: AppCompatActivity() {
 
         val runnableZ = Runnable {
             frameLayout.removeView(imageView)
+        }
+
+        if(timeLeftInMillis + 3000 < timerDuration) {
+            startRepeatCountDown(timeLeftInMillis + 2000, countDownInterval)
         }
         handlerZ.postDelayed(runnableZ, 2000)
     }

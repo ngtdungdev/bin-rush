@@ -1,29 +1,35 @@
 package com.example.bin_rush.fragment
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.example.bin_rush.activity.PlayActivity
-import com.example.bin_rush.activity.PlayActivity1
 import com.example.bin_rush.DTO.Game
 import com.example.bin_rush.R
 import com.example.bin_rush.activity.MainActivity
+import com.example.bin_rush.activity.PlayActivity
+import com.example.bin_rush.activity.PlayActivity1
 import com.example.bin_rush.adapter.GameAdapter
 import com.example.bin_rush.adapter.HorizontalSpaceItemDecoration
 import com.example.bin_rush.util.HeartDecreaseListener
 import com.example.bin_rush.util.HeartUpdateListener
 import com.example.bin_rush.util.OnAdapterListener
+import com.example.bin_rush.util.OnFragmentListener
 
 class PlayGameFragment : DialogFragment(){
 
@@ -44,6 +50,9 @@ class PlayGameFragment : DialogFragment(){
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        if (context is OnFragmentListener) {
+            listener = context
+        }
         if (context is HeartDecreaseListener) {
             heartDecreaseListener = context
         } else {
@@ -89,11 +98,11 @@ class PlayGameFragment : DialogFragment(){
                 if (remainingHearts > 0) {
                     when (position) {
                         0 -> {
-                            startActivity(Intent(requireContext(), PlayActivity::class.java))
+                            startActivityLauncher.launch(Intent(requireContext(), PlayActivity::class.java))
                             heartDecreaseListener?.decreaseHearts()
                         }
                         1 -> {
-                            startActivity(Intent(requireContext(), PlayActivity1::class.java))
+                            startActivityLauncher.launch(Intent(requireContext(), PlayActivity1::class.java))
                             heartDecreaseListener?.decreaseHearts()
                         }
                     }
@@ -125,6 +134,18 @@ class PlayGameFragment : DialogFragment(){
         recyclerView.adapter = gameAdapter
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
+    private val startActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data = result.data!!
+            val resultData = data.getIntExtra("result",0)
+            fragmentClick(resultData)
+        }
+    }
+    private var listener: OnFragmentListener? = null
+    private fun fragmentClick(position: Int) {
+        listener?.onFragmentListener(position)
+    }
     override fun onStart() {
         super.onStart()
         val window = dialog?.window

@@ -14,6 +14,7 @@ class LoadingActivity: AppCompatActivity() {
         val handler = Handler(Looper.getMainLooper())
         val runnable = Runnable {
             startActivity(Intent(this@LoadingActivity, MainActivity::class.java))
+            finish()
         }
         handler.postDelayed(runnable, 5000)
     }

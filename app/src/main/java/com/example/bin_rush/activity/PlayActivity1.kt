@@ -104,8 +104,8 @@ class PlayActivity1 : AppCompatActivity() {
         imageView.setImageResource(randomWasteType)
         imageView.tag = randomWasteType
 
-        val desiredWidth = 300
-        val desiredHeight = 300
+        val desiredWidth = 100
+        val desiredHeight = 100
 
         val layoutParams = FrameLayout.LayoutParams(
             desiredWidth,
@@ -199,7 +199,6 @@ class PlayActivity1 : AppCompatActivity() {
                         val dialogView = layoutInflater.inflate(R.layout.dialog_custom, null)
                         val dialogIcon = dialogView.findViewById<ImageView>(R.id.dialog_icon)
                         dialogIcon.setImageResource(R.drawable.icon_game)
-
                         val builder = AlertDialog.Builder(this@PlayActivity1)
                             .setTitle("Game Over")
                             .setMessage("You have lost the game.")

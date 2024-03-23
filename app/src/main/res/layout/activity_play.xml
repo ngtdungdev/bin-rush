@@ -1,100 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/playboard"
-    android:orientation="vertical">
+    android:background="@drawable/playboard">
 
     <FrameLayout
+        android:id="@+id/layoutLoading"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_margin="20dp"
-        android:background="#60675B5B">
+        android:layout_height="match_parent"
+        android:background="@drawable/gamecrush"
+        android:elevation="1dp"
+        tools:visibility="gone">
 
-        <TextView
-            android:id="@+id/score"
+        <ProgressBar
+            android:id="@+id/loading"
+            style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|top"
-            android:text="Score - 0"
-            android:textColor="#FFFFFF"
-            android:textSize="34sp"
-            android:textStyle="bold" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/imageClock"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                app:srcCompat="@drawable/clock" />
-
-            <ProgressBar
-                android:id="@+id/progressBar"
-                style="@android:style/Widget.ProgressBar.Horizontal"
-                android:layout_width="150dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:progress="25"
-                android:progressDrawable="@drawable/custom_progressbar"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-        </LinearLayout>
-
+            android:layout_gravity="center" />
     </FrameLayout>
 
-    <FrameLayout
-        android:id="@+id/frameLayout"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/LinearLayout"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:layout_gravity="bottom"
-            android:orientation="horizontal">
+            android:layout_margin="20dp"
+            android:background="#60675B5B">
 
-            <ImageView
-                android:id="@+id/imageInorganic"
-                android:layout_width="100dp"
+            <TextView
+                android:id="@+id/score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|top"
+                android:text="Score - 0"
+                android:textColor="#FFFFFF"
+                android:textSize="34sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/imageClock"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    app:srcCompat="@drawable/clock" />
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    style="@android:style/Widget.ProgressBar.Horizontal"
+                    android:layout_width="150dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:progress="25"
+                    android:progressDrawable="@drawable/custom_progressbar"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+            </LinearLayout>
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/frameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/LinearLayout"
+                android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:background="@drawable/recycle" />
+                android:layout_gravity="bottom"
+                android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/imageOrganic"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:background="@drawable/food_waste" />
+                <ImageView
+                    android:id="@+id/imageInorganic"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:background="@drawable/recycle" />
 
-            <ImageView
-                android:id="@+id/imageBiohazard"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="bottom|left"
-                android:background="@drawable/biohazard" />
+                <ImageView
+                    android:id="@+id/imageOrganic"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:background="@drawable/food_waste" />
 
-            <ImageView
-                android:id="@+id/imageRecycle"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="bottom|right"
-                android:background="@drawable/recycle_bin" />
-        </LinearLayout>
+                <ImageView
+                    android:id="@+id/imageBiohazard"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="bottom|left"
+                    android:background="@drawable/biohazard" />
 
-        <androidx.gridlayout.widget.GridLayout
-            android:id="@+id/board"
-            android:layout_width="400dp"
-            android:layout_height="400dp"
-            android:layout_gravity="center_horizontal"
-            android:background="#8B615757"
-            android:stretchMode="columnWidth"
-            app:orientation="horizontal" />
+                <ImageView
+                    android:id="@+id/imageRecycle"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="bottom|right"
+                    android:background="@drawable/recycle_bin" />
+            </LinearLayout>
 
-    </FrameLayout>
-</LinearLayout>
+            <androidx.gridlayout.widget.GridLayout
+                android:id="@+id/board"
+                android:layout_width="400dp"
+                android:layout_height="400dp"
+                android:layout_gravity="center_horizontal"
+                android:background="#8B615757"
+                android:stretchMode="columnWidth"
+                app:orientation="horizontal" />
+
+        </FrameLayout>
+    </LinearLayout>
+</FrameLayout>

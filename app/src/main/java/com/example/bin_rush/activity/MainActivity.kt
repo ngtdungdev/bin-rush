@@ -10,12 +10,15 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import com.bumptech.glide.Glide
 import com.example.bin_rush.fragment.PlayGameFragment
 import com.example.bin_rush.R
 import com.example.bin_rush.fragment.DateTimeFragment
 import com.example.bin_rush.util.HeartDecreaseListener
 import com.example.bin_rush.util.HeartUpdateListener
+import com.example.bin_rush.util.OnFragmentListener
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.database
 import com.google.firebase.database.ktx.database
@@ -271,5 +274,9 @@ class MainActivity : AppCompatActivity(), HeartDecreaseListener, HeartUpdateList
         super.onDestroy()
         countDownTimer?.cancel()
         countDownTimerHeart.cancel()
+    }
+
+    override fun onFragmentListener(data: Int) {
+        number.text = (number.text.toString().toInt() + data).toString()
     }
 }
