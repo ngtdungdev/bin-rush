@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">bin-rush</string>
+    <string name="app_name">GreenRush</string>
+    <string name="ad_banner">AD BANNER</string>
 </resources>

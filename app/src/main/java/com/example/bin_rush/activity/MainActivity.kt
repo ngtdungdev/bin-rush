@@ -1,5 +1,6 @@
 package com.example.bin_rush.activity
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -22,15 +23,21 @@ import com.google.firebase.ktx.Firebase
 import java.util.Locale
 
 class MainActivity : AppCompatActivity(), HeartDecreaseListener, HeartUpdateListener {
+    private var treeLevel = 1
     private var remainingHearts = 3
     private var heartRecoveryCount = 0
     private val MAX_HEARTS = 3
+    private val MAX_WATER = 5
+    private var value = 0
+    private var num = 0
     private lateinit var countDownTimerHeart: CountDownTimer
     private lateinit var imageView: ImageView
     private lateinit var progressBar: ProgressBar
     private var countDownTimer: CountDownTimer? = null
     private lateinit var number: TextView
-    private val initialTimeInMillis: Long = 60 * 60 * 1000
+    private lateinit var numberWater: TextView
+    private lateinit var description: TextView
+    private val initialTimeInMillis: Long = 1 * 10 * 1000
     private lateinit var btnPlay: ImageView
     private lateinit var btnDaily: ImageView
     private lateinit var imageTree: ImageView
@@ -41,6 +48,8 @@ class MainActivity : AppCompatActivity(), HeartDecreaseListener, HeartUpdateList
         setContentView(R.layout.activity_main)
         imageView = findViewById(R.id.image)
         number = findViewById(R.id.number)
+        numberWater = findViewById(R.id.numberWater)
+        description = findViewById(R.id.description)
         btnPlay = findViewById(R.id.btnPlay)
         progressBar = findViewById(R.id.progressBar)
         imageTree = findViewById(R.id.imageTree)
@@ -51,14 +60,129 @@ class MainActivity : AppCompatActivity(), HeartDecreaseListener, HeartUpdateList
         initView()
     }
 
+    private lateinit var database: DatabaseReference
+    @SuppressLint("SetTextI18n")
+    private fun initView() {
+        val action = supportActionBar
+        action?.hide()
+        Glide.with(this)
+            .asGif()
+            .load(R.drawable.benefit)
+            .into(btnDaily)
+        Glide.with(this)
+            .asGif()
+            .load(getTreeGif(treeLevel))
+            .into(imageTree)
+        Glide.with(this)
+            .asGif()
+            .load(R.drawable.water_drop)
+            .into(imageWater)
+        experience.max = 5
+        experience.progress = 0
+        imageView.setOnClickListener {
+            startActivity(Intent(this@MainActivity, PlayActivity::class.java))
+        }
+
+        imageWater.setOnClickListener {
+            if(value > 0) {
+                num = numberWater.text.toString().toIntOrNull() ?: 0
+                numberWater.text = (value + num).toString()
+                number.text = "0"
+                value = 0
+                startTimer(initialTimeInMillis)
+            }
+        }
+        description.text = "It takes " + getExperient() + " times to level up"
+        btnPlay.setOnClickListener {
+            num = numberWater.text.toString().toIntOrNull() ?: 0 //lấy CSDL
+            if(num > 0){
+                num--
+                numberWater.text = num.toString()
+                experience.progress++
+                if(experience.progress == experience.max){
+                    treeLevel++
+                    Glide.with(this)
+                        .asGif()
+                        .load(getTreeGif(treeLevel))
+                        .into(imageTree)
+                    experience.max = getNextMaxExperience(treeLevel)
+                    experience.progress = 0
+                }
+                description.text = "It takes " + getExperient() + " times to level up"
+            } else {
+                val fragment = PlayGameFragment()
+                val args = Bundle()
+                args.putInt("remainingHearts", remainingHearts)
+                fragment.arguments = args
+                fragment.show(supportFragmentManager, "PlayGameFragment")
+            }
+
+        }
+        btnDaily.setOnClickListener {
+            DateTimeFragment().show(supportFragmentManager , "DateTimeFragment")
+        }
+        database = Firebase.database.getReference("const")
+        startTimer(initialTimeInMillis)
+        startHeartRecoveryTimer()
+    }
+
+    private fun getExperient(): Int {
+        return experience.max - experience.progress
+    }
+
+    private fun getTreeGif(level: Int): Int {
+        return when(level) {
+            1 -> R.drawable.lvl1
+            2 -> R.drawable.lvl2
+            3 -> R.drawable.lvl3
+            4 -> R.drawable.lvl4
+            else -> R.drawable.lvl1
+        }
+    }
+
+    private fun getNextMaxExperience(level: Int): Int {
+        return when(level) {
+            1 -> 5
+            2 -> 25
+            3 -> 60
+            4 -> 100
+            else -> 5
+        }
+    }
+
+    private fun startHeartRecoveryTimer() {
+        if (remainingHearts < MAX_HEARTS) {
+            countDownTimerHeart = object : CountDownTimer(initialTimeInMillis, 1000) {
+                override fun onTick(millisUntilFinished: Long) {}
+
+                override fun onFinish() {
+                    recoverHeart()
+                    if (remainingHearts < MAX_HEARTS) {
+                        startHeartRecoveryTimer()
+                    }
+                }
+            }
+            countDownTimerHeart.start()
+        }
+    }
+
+    private fun recoverHeart() {
+        if (remainingHearts < MAX_HEARTS) {
+            remainingHearts++
+            heartRecoveryCount++
+            updateHeartsVisibility()
+        }
+    }
+
     override fun decreaseHearts() {
-        remainingHearts--
+        updateRemainingHearts(--remainingHearts)
         updateHeartsVisibility()
     }
 
     fun updateRemainingHearts(newRemainingHearts: Int) {
         remainingHearts = newRemainingHearts
         updateHeartsVisibility()
+        startHeartRecoveryTimer()
     }
 
     override fun updateHeartsVisibility() {
@@ -105,66 +229,6 @@ class MainActivity : AppCompatActivity(), HeartDecreaseListener, HeartUpdateList
         }
     }
 
-    private lateinit var database: DatabaseReference
-    private fun initView() {
-        val action = supportActionBar
-        action?.hide()
-        Glide.with(this)
-            .asGif()
-            .load(R.drawable.benefit)
-            .into(btnDaily)
-        Glide.with(this)
-            .asGif()
-            .load(R.drawable.lvl3)
-            .into(imageTree)
-        Glide.with(this)
-            .asGif()
-            .load(R.drawable.water_drop)
-            .into(imageWater)
-        experience.max = 100
-        experience.progress = 25
-        imageView.setOnClickListener {
-            startActivity(Intent(this@MainActivity, PlayActivity::class.java))
-        }
-        btnPlay.setOnClickListener {
-            val fragment = PlayGameFragment()
-            val args = Bundle()
-            args.putInt("remainingHearts", remainingHearts)
-            fragment.arguments = args
-            fragment.show(supportFragmentManager, "PlayGameFragment")
-        }
-        btnDaily.setOnClickListener {
-            DateTimeFragment().show(supportFragmentManager , "DateTimeFragment")
-        }
-        database = Firebase.database.getReference("const")
-        startTimer(initialTimeInMillis)
-        startHeartRecoveryTimer()
-    }
-
-    private fun startHeartRecoveryTimer() {
-        countDownTimerHeart = object : CountDownTimer(initialTimeInMillis, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-
-            }
-
-            override fun onFinish() {
-                recoverHeart()
-                if (heartRecoveryCount < MAX_HEARTS) {
-                    start()
-                }
-            }
-        }
-        countDownTimerHeart.start()
-    }
-
-    private fun recoverHeart() {
-        if (remainingHearts < MAX_HEARTS) {
-            remainingHearts++
-            heartRecoveryCount++
-            updateHeartsVisibility()
-        }
-    }
-
     private fun getLevelUp(id : Int) {
         database.child("_TREE_LEVELS").child(id.toString()).child("level_up").get().addOnSuccessListener {
             it.value.toString()
@@ -173,18 +237,22 @@ class MainActivity : AppCompatActivity(), HeartDecreaseListener, HeartUpdateList
         }
     }
     private fun startTimer(timeInMillis: Long) {
-        countDownTimer = object : CountDownTimer(timeInMillis, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                updateCountDownText(millisUntilFinished)
-                progressBar.progress = initialTimeInMillis.toInt() - millisUntilFinished.toInt()
-            }
+        if (value < MAX_WATER) {
+            countDownTimer = object : CountDownTimer(timeInMillis, 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+                    updateCountDownText(millisUntilFinished)
+                    progressBar.progress = initialTimeInMillis.toInt() - millisUntilFinished.toInt()
+                }
 
-            override fun onFinish() {
-                number.text = (number.text.toString().toInt() + 1).toString()
-                progressBar.progress = 0
-                startTimer(initialTimeInMillis)
-            }
-        }.start()
+                @SuppressLint("SetTextI18n")
+                override fun onFinish() {
+                    number.text = (number.text.toString().toInt() + 1).toString()
+                    value = number.text.toString().toIntOrNull() ?: 0
+                    progressBar.progress = 0
+                    startTimer(initialTimeInMillis)
+                }
+            }.start()
+        }
     }
 
     private fun updateCountDownText(millisUntilFinished: Long) {
@@ -197,5 +265,6 @@ class MainActivity : AppCompatActivity(), HeartDecreaseListener, HeartUpdateList
     override fun onDestroy() {
         super.onDestroy()
         countDownTimer?.cancel()
+        countDownTimerHeart.cancel()
     }
 }
