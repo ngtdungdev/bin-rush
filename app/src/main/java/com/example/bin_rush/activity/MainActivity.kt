@@ -25,7 +25,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import java.util.Locale
 
-class MainActivity : AppCompatActivity(), HeartDecreaseListener, HeartUpdateListener {
+class MainActivity : AppCompatActivity(), HeartDecreaseListener, HeartUpdateListener,  OnFragmentListener{
     private var treeLevel = 1
     private var remainingHearts = 3
     private var heartRecoveryCount = 0
