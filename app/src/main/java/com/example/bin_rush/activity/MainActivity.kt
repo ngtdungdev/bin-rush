@@ -19,15 +19,18 @@ import com.example.bin_rush.fragment.DateTimeFragment
 import com.example.bin_rush.util.HeartDecreaseListener
 import com.example.bin_rush.util.HeartUpdateListener
 import com.example.bin_rush.util.OnFragmentListener
+import com.example.bin_rush.util.ProgressListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import java.time.LocalDate
+import java.time.format.TextStyle
 import java.util.Locale
 
-class MainActivity : AppCompatActivity(), HeartDecreaseListener, HeartUpdateListener,  OnFragmentListener{
+class MainActivity : AppCompatActivity(), HeartDecreaseListener, HeartUpdateListener,  OnFragmentListener, ProgressListener{
     private var treeLevel = 1
     private var remainingHearts = 3
     private var heartRecoveryCount = 0
@@ -42,12 +45,13 @@ class MainActivity : AppCompatActivity(), HeartDecreaseListener, HeartUpdateList
     private lateinit var number: TextView
     private lateinit var numberWater: TextView
     private lateinit var description: TextView
-    private val initialTimeInMillis: Long = 1 * 10 * 1000
+    private val initialTimeInMillis: Long =  60 * 10 * 1000
     private lateinit var btnPlay: ImageView
     private lateinit var btnDaily: ImageView
     private lateinit var imageTree: ImageView
     private lateinit var imageWater: ImageView
     private lateinit var experience: ProgressBar
+
     private var isTimerRunning = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,9 +94,10 @@ class MainActivity : AppCompatActivity(), HeartDecreaseListener, HeartUpdateList
         }
 
         imageWater.setOnClickListener {
-            if(value > 0) {
+            val quantity = number.text.toString().toIntOrNull() ?: 0
+            if(quantity > 0) {
                 num = numberWater.text.toString().toIntOrNull() ?: 0
-                numberWater.text = (value + num).toString()
+                numberWater.text = (quantity + num).toString()
                 number.text = "0"
                 value = 0
                 if (!isTimerRunning) {
@@ -291,5 +296,9 @@ class MainActivity : AppCompatActivity(), HeartDecreaseListener, HeartUpdateList
 
     override fun onFragmentListener(data: Int) {
         number.text = (number.text.toString().toInt() + data).toString()
+    }
+
+    override fun onProgressListener() {
+        experience.progress++
     }
 }

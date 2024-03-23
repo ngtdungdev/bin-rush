@@ -191,12 +191,12 @@ class PlayActivity1 : AppCompatActivity() {
 
                     if (gameOver) {
                         frameLayout.removeView(view)
-                        val dialogView = layoutInflater.inflate(R.layout.dialog_custom, null)
+                        val dialogView = layoutInflater.inflate(R.layout.dialog_custom_lost, null)
                         val dialogIcon = dialogView.findViewById<ImageView>(R.id.dialog_icon)
                         dialogIcon.setImageResource(R.drawable.icon_game)
                         val builder = AlertDialog.Builder(this@PlayActivity1)
-                            .setTitle("Game Over")
-                            .setMessage("You have lost the game.")
+                            .setTitle("Thua cuộc")
+                            .setMessage("Hãy cố gắng lần sau nhé.")
                             .setView(dialogView)
                             .setPositiveButton("Exit") { dialog, which ->
                                 finish()
@@ -207,6 +207,22 @@ class PlayActivity1 : AppCompatActivity() {
                     } else if (remainingWaste == 0) {
                         // TODO: WIN
                     }
+//                    else {
+//                        frameLayout.removeView(view)
+//                        val dialogView = layoutInflater.inflate(R.layout.dialog_custom_win, null)
+//                        val dialogIcon = dialogView.findViewById<ImageView>(R.id.dialog_icon)
+//                        dialogIcon.setImageResource(R.drawable.icon_game)
+//                        val builder = AlertDialog.Builder(this@PlayActivity1)
+//                            .setTitle("Chiến thắng")
+//                            .setMessage("Bạn nhận được một bình nước.")
+//                            .setView(dialogView)
+//                            .setPositiveButton("Exit") { dialog, which ->
+//                                finish()
+//                            }
+//                        val dialog = builder.create()
+//                        dialog.setCanceledOnTouchOutside(false)
+//                        dialog.show()
+//                    }
                 }
             }
             frameLayout.invalidate()
