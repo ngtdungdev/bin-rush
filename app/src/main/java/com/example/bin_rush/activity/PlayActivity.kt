@@ -25,34 +25,20 @@ class PlayActivity: AppCompatActivity() {
     private val WASTE_TYPE = intArrayOf(
         R.drawable.apple,
         R.drawable.banana,
-        R.drawable.battery_status,
         R.drawable.bottle,
-//        R.drawable.broken_glass,
-//        R.drawable.dirty_clothes,
-//        R.drawable.fish_bone,
-//        R.drawable.glass_bottle,
         R.drawable.metal,
-//        R.drawable.mineral_water,
         R.drawable.plastic,
-        R.drawable.paper,
+        R.drawable.paper_super,
         R.drawable.vaccine,
-//        R.drawable.waste,
     )
     private val classification = mapOf(
         R.drawable.apple to 2,
         R.drawable.banana to 2,
-        R.drawable.battery_status to 3,
         R.drawable.bottle to 4,
-//        R.drawable.broken_glass to 4,
-//        R.drawable.dirty_clothes to 1,
-//        R.drawable.fish_bone to 2,
-//        R.drawable.glass_bottle to 4,
-        R.drawable.metal to 1,
-//        R.drawable.mineral_water to 4,
-        R.drawable.plastic to 4,
-        R.drawable.paper to 1,
+        R.drawable.metal to 4,
+        R.drawable.plastic to 1,
+        R.drawable.paper_super to 1,
         R.drawable.vaccine to 3,
-//        R.drawable.waste to 3,
     )
 
     var widthOfBlock: Int = 0
