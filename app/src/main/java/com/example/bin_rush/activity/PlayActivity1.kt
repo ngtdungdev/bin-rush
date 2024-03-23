@@ -64,6 +64,11 @@ class PlayActivity1 : AppCompatActivity() {
         R.drawable.waste to 3,
     )
 
+
+    companion object {
+        const val NUMBER_OF_WASTE = 60
+    }
+    private var remainingWaste: Int = NUMBER_OF_WASTE
     private var xDelta = 0
     private var yDelta = 0
     private lateinit var imageInorganic: ImageView
@@ -90,7 +95,7 @@ class PlayActivity1 : AppCompatActivity() {
                 val boardWidth = frameLayout.width
                 val boardHeight = frameLayout.height
 
-                repeat(60) {
+                repeat(NUMBER_OF_WASTE) {
                     addImageView(boardWidth, boardHeight)
                 }
             }
@@ -104,8 +109,8 @@ class PlayActivity1 : AppCompatActivity() {
         imageView.setImageResource(randomWasteType)
         imageView.tag = randomWasteType
 
-        val desiredWidth = 100
-        val desiredHeight = 100
+        val desiredWidth = 150
+        val desiredHeight = 150
 
         val layoutParams = FrameLayout.LayoutParams(
             desiredWidth,
@@ -116,7 +121,7 @@ class PlayActivity1 : AppCompatActivity() {
         imageView.scaleType = ImageView.ScaleType.CENTER_CROP
 
         val randomX = Random.nextInt(0, boardWidth - desiredWidth)
-        val randomY = Random.nextInt(300, boardHeight - desiredHeight)
+        val randomY = Random.nextInt((imageInorganic.height * 1.5).toInt(), boardHeight - desiredHeight)
 
         layoutParams.leftMargin = randomX
         layoutParams.topMargin = randomY
@@ -159,36 +164,26 @@ class PlayActivity1 : AppCompatActivity() {
                 MotionEvent.ACTION_UP -> {
                     val layoutParams = view.layoutParams as FrameLayout.LayoutParams
 
-                    val screenLocation = IntArray(2)
-                    val locationInorganic = IntArray(2)
-                    val locationOrganic = IntArray(2)
-                    val locationBiohazard = IntArray(2)
-                    val locationRecycle = IntArray(2)
-
-                    frameLayout.getLocationOnScreen(screenLocation)
-                    imageInorganic.getLocationOnScreen(locationInorganic)
-                    imageOrganic.getLocationOnScreen(locationOrganic)
-                    imageBiohazard.getLocationOnScreen(locationBiohazard)
-                    imageRecycle.getLocationOnScreen(locationRecycle)
-
-                    val dropX = screenLocation[0] + layoutParams.leftMargin
-                    val dropY = screenLocation[1] + layoutParams.topMargin
-                    val xOrganic = locationOrganic[0]
-                    val xBiohazard = locationBiohazard[0]
-                    val xRecycle = locationRecycle[0]
+                    val dropX = layoutParams.leftMargin + layoutParams.width / 2
+                    val dropY = layoutParams.topMargin + layoutParams.height / 2
 
                     var gameOver = false
                     val wasteType = view.tag as? Int
                     val classificationOfWaste = classification[wasteType]
-                    if (wasteType != null && dropY < 120) {
-                        if (dropX >= 0 && dropX < xOrganic/4 && classificationOfWaste == 1)
+                    if (wasteType != null && dropY < imageInorganic.height) {
+                        if (dropX >= imageInorganic.x && dropX <= imageInorganic.x + imageInorganic.width && classificationOfWaste == 1) {
                             frameLayout.removeView(view)
-                        else if (dropX >= xOrganic*2/3 && dropX < xBiohazard - xOrganic*2/3 && classificationOfWaste == 2)
+                            remainingWaste--
+                        } else if (dropX >= imageOrganic.x && dropX <= imageOrganic.x + imageOrganic.width && classificationOfWaste == 2) {
                             frameLayout.removeView(view)
-                        else if (dropX >= xBiohazard - xOrganic/4 && dropX < xRecycle - xOrganic*2/3 && classificationOfWaste == 3)
+                            remainingWaste--
+                        } else if (dropX >= imageBiohazard.x && dropX <= imageBiohazard.x + imageBiohazard.width && classificationOfWaste == 3) {
                             frameLayout.removeView(view)
-                        else if (dropX >= xRecycle - xOrganic/4 && classificationOfWaste == 4) frameLayout.removeView(view)
-                        else {
+                            remainingWaste--
+                        } else if (dropX >= imageRecycle.x && dropX <= imageRecycle.x + imageRecycle.width && classificationOfWaste == 4) {
+                            frameLayout.removeView(view)
+                            remainingWaste--
+                        } else {
                             gameOver = true
                             frameLayout.removeView(view)
                         }
@@ -209,6 +204,8 @@ class PlayActivity1 : AppCompatActivity() {
                         val dialog = builder.create()
                         dialog.setCanceledOnTouchOutside(false)
                         dialog.show()
+                    } else if (remainingWaste == 0) {
+                        // TODO: WIN
                     }
 //                    else {
 //                        frameLayout.removeView(view)
