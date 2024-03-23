@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity(), HeartDecreaseListener, HeartUpdateList
     private lateinit var imageTree: ImageView
     private lateinit var imageWater: ImageView
     private lateinit var experience: ProgressBar
+    private var isTimerRunning = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -89,7 +90,9 @@ class MainActivity : AppCompatActivity(), HeartDecreaseListener, HeartUpdateList
                 numberWater.text = (value + num).toString()
                 number.text = "0"
                 value = 0
-                startTimer(initialTimeInMillis)
+                if (!isTimerRunning) {
+                    startTimer(initialTimeInMillis)
+                }
             }
         }
         description.text = "It takes " + getExperient() + " times to level up"
@@ -136,7 +139,7 @@ class MainActivity : AppCompatActivity(), HeartDecreaseListener, HeartUpdateList
             2 -> R.drawable.lvl2
             3 -> R.drawable.lvl3
             4 -> R.drawable.lvl4
-            else -> R.drawable.lvl1
+            else -> R.drawable.lvl4
         }
     }
 
@@ -146,7 +149,7 @@ class MainActivity : AppCompatActivity(), HeartDecreaseListener, HeartUpdateList
             2 -> 25
             3 -> 60
             4 -> 100
-            else -> 5
+            else -> 0
         }
     }
 
@@ -238,6 +241,7 @@ class MainActivity : AppCompatActivity(), HeartDecreaseListener, HeartUpdateList
     }
     private fun startTimer(timeInMillis: Long) {
         if (value < MAX_WATER) {
+            isTimerRunning = true
             countDownTimer = object : CountDownTimer(timeInMillis, 1000) {
                 override fun onTick(millisUntilFinished: Long) {
                     updateCountDownText(millisUntilFinished)
@@ -246,6 +250,7 @@ class MainActivity : AppCompatActivity(), HeartDecreaseListener, HeartUpdateList
 
                 @SuppressLint("SetTextI18n")
                 override fun onFinish() {
+                    isTimerRunning = false
                     number.text = (number.text.toString().toInt() + 1).toString()
                     value = number.text.toString().toIntOrNull() ?: 0
                     progressBar.progress = 0
