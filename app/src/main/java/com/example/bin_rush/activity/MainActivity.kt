@@ -19,8 +19,10 @@ import com.example.bin_rush.fragment.DateTimeFragment
 import com.example.bin_rush.util.HeartDecreaseListener
 import com.example.bin_rush.util.HeartUpdateListener
 import com.example.bin_rush.util.OnFragmentListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.database
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import java.util.Locale
@@ -236,11 +238,22 @@ class MainActivity : AppCompatActivity(), HeartDecreaseListener, HeartUpdateList
     }
 
     private fun getLevelUp(id : Int) {
-        database.child("_TREE_LEVELS").child(id.toString()).child("level_up").get().addOnSuccessListener {
-            it.value.toString()
-        }.addOnFailureListener{
-            Log.i("firebase", "Error getting data", it)
-        }
+        database.child("const").child("_TREE_LEVELS")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        val levelUpData = dataSnapshot.child("level_up").value.toString()
+                        // Update UI or perform actions based on levelUpData
+                        Log.i("com", levelUpData)
+                    } else {
+                        Log.i("com", "Level Up data does not exist")
+                    }
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Log.i("com", "Error getting level up data", databaseError.toException())
+                }
+            })
     }
     private fun startTimer(timeInMillis: Long) {
         if (value < MAX_WATER) {
