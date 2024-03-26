@@ -68,7 +68,7 @@ class PlayActivity1 : AppCompatActivity() {
 
 
     companion object {
-        const val NUMBER_OF_WASTE = 10
+        const val NUMBER_OF_WASTE = 80
     }
     private var remainingWaste: Int = NUMBER_OF_WASTE
     private var xDelta = 0
