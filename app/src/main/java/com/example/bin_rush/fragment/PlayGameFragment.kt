@@ -6,15 +6,12 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
@@ -31,6 +28,7 @@ import com.example.bin_rush.util.HeartUpdateListener
 import com.example.bin_rush.util.OnAdapterListener
 import com.example.bin_rush.util.OnFragmentListener
 
+@Suppress("DEPRECATION")
 class PlayGameFragment : DialogFragment(){
 
     private lateinit var recyclerView: RecyclerView
@@ -102,14 +100,15 @@ class PlayGameFragment : DialogFragment(){
                             heartDecreaseListener?.decreaseHearts()
                         }
                         1 -> {
-                            startActivityLauncher.launch(Intent(requireContext(), PlayActivity1::class.java))
+                            val intent = Intent(requireActivity(), PlayActivity1::class.java)
+                            startActivityForResult(intent, 200)
                             heartDecreaseListener?.decreaseHearts()
                         }
                     }
                 } else {
                     val alertDialogBuilder = AlertDialog.Builder(requireContext())
-                    alertDialogBuilder.setTitle("Notification")
-                    alertDialogBuilder.setMessage("You've run out of plays, please watch an ad!")
+                    alertDialogBuilder.setTitle("Thông báo")
+                    alertDialogBuilder.setMessage("Bạn đã hết lượt chơi, xem quảng cáo!")
                     alertDialogBuilder.setPositiveButton("Watch Ad") { dialog, _ ->
                         remainingHearts++
                         heartUpdateListener?.updateHeartsVisibility()
@@ -134,7 +133,15 @@ class PlayGameFragment : DialogFragment(){
         recyclerView.adapter = gameAdapter
     }
 
-    @RequiresApi(Build.VERSION_CODES.R)
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 200 && resultCode == Activity.RESULT_OK) {
+            val waterIncrease = data?.getIntExtra("waterIncrease", 0) ?: 0
+            (activity as? MainActivity)?.updateWaterAmount(waterIncrease)
+        }
+    }
+
     private val startActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val data = result.data!!

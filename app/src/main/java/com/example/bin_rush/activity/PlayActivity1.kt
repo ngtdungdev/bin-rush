@@ -1,7 +1,9 @@
 package com.example.bin_rush.activity
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
@@ -66,7 +68,7 @@ class PlayActivity1 : AppCompatActivity() {
 
 
     companion object {
-        const val NUMBER_OF_WASTE = 60
+        const val NUMBER_OF_WASTE = 10
     }
     private var remainingWaste: Int = NUMBER_OF_WASTE
     private var xDelta = 0
@@ -109,8 +111,8 @@ class PlayActivity1 : AppCompatActivity() {
         imageView.setImageResource(randomWasteType)
         imageView.tag = randomWasteType
 
-        val desiredWidth = 150
-        val desiredHeight = 150
+        val desiredWidth = 200
+        val desiredHeight = 200
 
         val layoutParams = FrameLayout.LayoutParams(
             desiredWidth,
@@ -206,15 +208,20 @@ class PlayActivity1 : AppCompatActivity() {
                         dialog.show()
                     } else if (remainingWaste == 0) {
                         frameLayout.removeView(view)
+                        val resultIntent = Intent()
+                        resultIntent.putExtra("waterIncrease", 1)
+                        setResult(Activity.RESULT_OK, resultIntent)
                         val dialogView = layoutInflater.inflate(R.layout.dialog_custom_win, null)
                         val dialogIcon = dialogView.findViewById<ImageView>(R.id.dialog_icon)
-                        dialogIcon.setImageResource(R.drawable.icon_game)
+                        dialogIcon.setImageResource(R.drawable.banner)
                         val builder = AlertDialog.Builder(this@PlayActivity1)
                             .setTitle("Chiến thắng")
                             .setMessage("Bạn nhận được một bình nước.")
                             .setView(dialogView)
                             .setPositiveButton("Exit") { dialog, which ->
-                                finish()
+                                if (!isFinishing) {
+                                    finish()
+                                }
                             }
                         val dialog = builder.create()
                         dialog.setCanceledOnTouchOutside(false)

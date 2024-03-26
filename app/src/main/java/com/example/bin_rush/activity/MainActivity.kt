@@ -1,6 +1,7 @@
 package com.example.bin_rush.activity
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -45,7 +46,7 @@ class MainActivity : AppCompatActivity(), HeartDecreaseListener, HeartUpdateList
     private lateinit var number: TextView
     private lateinit var numberWater: TextView
     private lateinit var description: TextView
-    private val initialTimeInMillis: Long =  60 * 10 * 1000
+    private val initialTimeInMillis: Long =  60 * 60 * 1000
     private lateinit var btnPlay: ImageView
     private lateinit var btnDaily: ImageView
     private lateinit var imageTree: ImageView
@@ -105,7 +106,7 @@ class MainActivity : AppCompatActivity(), HeartDecreaseListener, HeartUpdateList
                 }
             }
         }
-        description.text = "It takes " + getExperient() + " times to level up"
+        description.text = "Cần " + getExperient() + " lần tưới để tăng cấp"
         btnPlay.setOnClickListener {
             num = numberWater.text.toString().toIntOrNull() ?: 0 //lấy CSDL
             if(num > 0){
@@ -121,7 +122,7 @@ class MainActivity : AppCompatActivity(), HeartDecreaseListener, HeartUpdateList
                     experience.max = getNextMaxExperience(treeLevel)
                     experience.progress = 0
                 }
-                description.text = "It takes " + getExperient() + " times to level up"
+                description.text = "Cần " + getExperient() + " lần tưới để tăng cấp"
             } else {
                 val fragment = PlayGameFragment()
                 val args = Bundle()
@@ -137,6 +138,10 @@ class MainActivity : AppCompatActivity(), HeartDecreaseListener, HeartUpdateList
         database = Firebase.database.getReference("const")
         startTimer(initialTimeInMillis)
         startHeartRecoveryTimer()
+    }
+
+    fun updateWaterAmount(waterIncrease: Int) {
+        numberWater.text = (numberWater.text.toString().toInt() + 1).toString()
     }
 
     private fun getExperient(): Int {
@@ -294,11 +299,13 @@ class MainActivity : AppCompatActivity(), HeartDecreaseListener, HeartUpdateList
         countDownTimerHeart.cancel()
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onFragmentListener(data: Int) {
-        number.text = (number.text.toString().toInt() + data).toString()
+        numberWater.text = (numberWater.text.toString().toInt() + data).toString()
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onProgressListener() {
-        experience.progress++
+        numberWater.text = ((numberWater.text.toString().toIntOrNull() ?: (0)) + 1).toString()
     }
 }
